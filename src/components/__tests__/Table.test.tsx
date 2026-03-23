@@ -39,11 +39,20 @@ describe('Table', () => {
   });
 
   it('respects maxRows prop', () => {
-    const { lastFrame } = render(<Table columns={columns} data={data} maxRows={1} />);
-    const frame = lastFrame();
-    
-    expect(frame).toContain('Alice');
-    expect(frame).not.toContain('Bob');
+    const threeRows = [
+      { id: 1, name: 'Alice', score: 95 },
+      { id: 2, name: 'Bob', score: 82 },
+      { id: 3, name: 'Carol', score: 70 },
+    ];
+    // maxRows=1 with 2 items: only 1 remaining → shows both (no ▼ for single extra)
+    const { lastFrame: twoFrame } = render(<Table columns={columns} data={data} maxRows={1} />);
+    expect(twoFrame()).toContain('Alice');
+    expect(twoFrame()).toContain('Bob');
+
+    // maxRows=1 with 3 items: 2 remaining → shows ▼
+    const { lastFrame: threeFrame } = render(<Table columns={columns} data={threeRows} maxRows={1} />);
+    expect(threeFrame()).toContain('Alice');
+    expect(threeFrame()).not.toContain('Carol');
   });
 
   it('handles selectedIndex', () => {

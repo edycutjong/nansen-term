@@ -15,6 +15,7 @@ interface NetflowPaneProps {
   paneNumber?: number;
   refreshTrigger?: number;
   onHighlight?: (token: string | null, pane: PaneId) => void;
+  onDataLength?: (len: number) => void;
 }
 
 const COLUMNS = [
@@ -23,7 +24,7 @@ const COLUMNS = [
   { header: '7d Flow', key: 'flow7d', width: 12, align: 'right' as const },
 ];
 
-export default function NetflowPane({ chain, isActive, selectedIndex, height, maxRows = 8, paneNumber, refreshTrigger = 0, onHighlight }: NetflowPaneProps) {
+export default function NetflowPane({ chain, isActive, selectedIndex, height, maxRows = 8, paneNumber, refreshTrigger = 0, onHighlight, onDataLength }: NetflowPaneProps) {
   const { data, loading, error } = useNansen(
     'research smart-money netflow',
     ['--chain', chain, '--limit', '10'],
@@ -50,6 +51,10 @@ export default function NetflowPane({ chain, isActive, selectedIndex, height, ma
       }
     }
   }, [isActive, clampedIndex, rows, onHighlight]);
+
+  React.useEffect(() => {
+    if (onDataLength) onDataLength(rows.length);
+  }, [rows.length, onDataLength]);
   if (loading) {
     return (
       <Pane title="Smart Money Netflow" emoji="📊" isActive={isActive} paneNumber={paneNumber} width="50%" height={height}>

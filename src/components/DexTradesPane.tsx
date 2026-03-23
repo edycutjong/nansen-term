@@ -17,6 +17,7 @@ interface DexTradesPaneProps {
   paneNumber?: number;
   refreshTrigger?: number;
   onHighlight?: (token: string | null, pane: PaneId) => void;
+  onDataLength?: (len: number) => void;
 }
 
 const COLUMNS = [
@@ -35,7 +36,7 @@ function parseEntry(entry: Record<string, unknown>) {
   };
 }
 
-export default function DexTradesPane({ chain, isActive, selectedIndex, isStreaming = false, height, maxRows = 7, paneNumber, refreshTrigger = 0, onHighlight }: DexTradesPaneProps) {
+export default function DexTradesPane({ chain, isActive, selectedIndex, isStreaming = false, height, maxRows = 7, paneNumber, refreshTrigger = 0, onHighlight, onDataLength }: DexTradesPaneProps) {
   const { data, loading: snapLoading, error: snapError } = useNansen(
     'research smart-money dex-trades',
     ['--chain', chain, '--limit', '10'],
@@ -88,6 +89,10 @@ export default function DexTradesPane({ chain, isActive, selectedIndex, isStream
       }
     }
   }, [isActive, clampedIndex, rows.length, onHighlight]);
+
+  useEffect(() => {
+    if (onDataLength) onDataLength(rows.length);
+  }, [rows.length, onDataLength]);
 
   const modeLabel = streamActive ? '● LIVE' : '(Snapshot)';
   const title = `DEX Trades ${modeLabel}`;

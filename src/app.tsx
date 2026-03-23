@@ -255,6 +255,12 @@ export default function App() {
     setScrollIndex((i) => Math.max(0, i - 1));
   }, []);
 
+  // Track active pane's data length to cap scroll
+  const dataLengthRef = useRef(10);
+  const handleDataLength = useCallback((len: number) => {
+    dataLengthRef.current = len;
+  }, []);
+
   const { stdout } = useStdout();
   const totalRows = stdout?.rows ?? 40;
 
@@ -265,7 +271,7 @@ export default function App() {
   const paneDataRows = Math.max(3, Math.floor((totalRows - 3) / 2) - 5);
 
   const handleScrollDown = useCallback(() => {
-    setScrollIndex((i) => Math.min(i + 1, 49));
+    setScrollIndex((i) => Math.min(i + 1, dataLengthRef.current - 1));
   }, []);
 
   // Auto-refresh timer — only increments trigger, no full remount
@@ -366,6 +372,7 @@ export default function App() {
           onHighlight={handleHighlight}
           maxRows={paneDataRows}
           paneNumber={1}
+          onDataLength={state.activePane === 'netflow' ? handleDataLength : undefined}
         />
         <DexTradesPane
           chain={state.chain}
@@ -376,6 +383,7 @@ export default function App() {
           onHighlight={handleHighlight}
           maxRows={paneDataRows}
           paneNumber={2}
+          onDataLength={state.activePane === 'dex-trades' ? handleDataLength : undefined}
         />
       </Box>
 
@@ -388,6 +396,7 @@ export default function App() {
           onHighlight={handleHighlight}
           maxRows={paneDataRows}
           paneNumber={3}
+          onDataLength={state.activePane === 'perp' ? handleDataLength : undefined}
         />
         <WalletPane
           chain={state.chain}

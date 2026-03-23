@@ -17,29 +17,46 @@ interface TableProps {
 
 export default function Table({ columns, data, maxRows, selectedIndex }: TableProps) {
   const totalWidth = columns.reduce((sum, col) => sum + col.width, 0);
-  const needsScroll = maxRows !== undefined && data.length > maxRows;
 
   // Calculate the visible window
   let scrollOffset = 0;
-  // When data exceeds maxRows, always reserve 1 row for the ▼ indicator
-  // so the row count stays consistent between selected/unselected states
-  let visibleCount = needsScroll ? Math.max(1, maxRows - 1) : (maxRows ?? data.length);
+  let visibleCount = maxRows ?? data.length;
+  let showAbove = false;
+  let showBelow = false;
 
-  if (needsScroll && selectedIndex !== undefined && selectedIndex >= 0) {
-    // Compute raw scroll position
-    scrollOffset = Math.max(0, Math.min(selectedIndex - visibleCount + 1, data.length - visibleCount));
+  if (maxRows !== undefined && data.length > maxRows) {
+    // Start with reserving 1 row for ▼
+    visibleCount = Math.max(1, maxRows - 1);
 
-    // If scrolled down, we also need ▲ — steal another row
-    if (scrollOffset > 0) {
-      visibleCount = maxRows! - 2; // 1 for ▲ + 1 for ▼
-      // Recompute offset with updated visible count
+    if (selectedIndex !== undefined && selectedIndex >= 0) {
+      // Compute scroll position
       scrollOffset = Math.max(0, Math.min(selectedIndex - visibleCount + 1, data.length - visibleCount));
+
+      // If scrolled down, also need ▲ — steal another row
+      if (scrollOffset > 0) {
+        visibleCount = Math.max(1, maxRows - 2); // 1 for ▲ + 1 for ▼
+        scrollOffset = Math.max(0, Math.min(selectedIndex - visibleCount + 1, data.length - visibleCount));
+      }
     }
+
+    // If only 1 item above, just show it instead of ▲ indicator
+    if (scrollOffset === 1) {
+      scrollOffset = 0;
+      visibleCount += 1; // reclaim the ▲ row
+    }
+
+    const remaining = data.length - scrollOffset - visibleCount;
+
+    // If only 1 item below, just show it instead of ▼ indicator
+    if (remaining === 1) {
+      visibleCount += 1; // reclaim the ▼ row
+    }
+
+    showAbove = scrollOffset > 0;
+    showBelow = scrollOffset + visibleCount < data.length;
   }
 
   const rows = data.slice(scrollOffset, scrollOffset + visibleCount);
-  const hasAbove = scrollOffset > 0;
-  const hasMore = scrollOffset + visibleCount < data.length;
 
   return (
     <Box flexDirection="column">
@@ -66,7 +83,7 @@ export default function Table({ columns, data, maxRows, selectedIndex }: TablePr
       </Box>
 
       {/* Scroll up indicator — below separator, in the data area */}
-      {hasAbove ? (
+      {showAbove ? (
         <Box justifyContent="center" width={totalWidth}>
           <Text color="gray" dimColor>▲ {scrollOffset} more</Text>
         </Box>
@@ -105,7 +122,7 @@ export default function Table({ columns, data, maxRows, selectedIndex }: TablePr
       )}
 
       {/* Scroll down indicator */}
-      {hasMore ? (
+      {showBelow ? (
         <Box justifyContent="center" width={totalWidth}>
           <Text color="gray" dimColor>▼ {data.length - scrollOffset - visibleCount} more</Text>
         </Box>

@@ -14,6 +14,7 @@ interface PerpPaneProps {
   paneNumber?: number;
   refreshTrigger?: number;
   onHighlight?: (token: string | null, pane: PaneId) => void;
+  onDataLength?: (len: number) => void;
 }
 
 const COLUMNS = [
@@ -22,7 +23,7 @@ const COLUMNS = [
   { header: 'OI Change', key: 'oiChange', width: 12, align: 'right' as const },
 ];
 
-export default function PerpPane({ isActive, selectedIndex, height, maxRows = 8, paneNumber, refreshTrigger = 0, onHighlight }: PerpPaneProps) {
+export default function PerpPane({ isActive, selectedIndex, height, maxRows = 8, paneNumber, refreshTrigger = 0, onHighlight, onDataLength }: PerpPaneProps) {
   const { data, loading, error } = useNansen(
     'research perp screener',
     ['--limit', '10'],
@@ -47,6 +48,10 @@ export default function PerpPane({ isActive, selectedIndex, height, maxRows = 8,
       }
     }
   }, [isActive, clampedIndex, rows, onHighlight]);
+
+  React.useEffect(() => {
+    if (onDataLength) onDataLength(rows.length);
+  }, [rows.length, onDataLength]);
   if (loading) {
     return (
       <Pane title="Perp Screener" emoji="📈" isActive={isActive} paneNumber={paneNumber} width="50%" height={height}>
