@@ -260,8 +260,9 @@ export default function App() {
 
   // Dynamic max visible rows per pane based on terminal height
   // Layout: header(2) + statusBar(1) = 3
-  // Pane overhead: border(2) + title(1) + margin(1) + tableHeader(1) + separator(1) + extra(2 streaming/footer) = 8
-  const paneDataRows = Math.max(3, Math.floor((totalRows - 3) / 2) - 8);
+  // Pane overhead: border(2) + title(1) + tableHeader(1) + separator(1) = 5
+  // Note: ▼ indicator is handled inside Table's maxRows budget
+  const paneDataRows = Math.max(3, Math.floor((totalRows - 3) / 2) - 5);
 
   const handleScrollDown = useCallback(() => {
     setScrollIndex((i) => Math.min(i + 1, 49));

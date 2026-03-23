@@ -117,7 +117,7 @@ export default function DexTradesPane({ chain, isActive, selectedIndex, isStream
           <Text color="gray">[S] stop streaming</Text>
         </Box>
       )}
-      <Table columns={COLUMNS} data={rows} maxRows={maxRows} selectedIndex={isActive ? clampedIndex : undefined} />
+      <Table columns={COLUMNS} data={rows} maxRows={isStreaming ? Math.max(1, maxRows - 2) : maxRows} selectedIndex={isActive ? clampedIndex : undefined} />
     </Pane>
   );
 }
