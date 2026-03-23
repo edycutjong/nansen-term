@@ -17,38 +17,32 @@ interface TableProps {
 
 export default function Table({ columns, data, maxRows, selectedIndex }: TableProps) {
   const totalWidth = columns.reduce((sum, col) => sum + col.width, 0);
+  const needsScroll = maxRows !== undefined && data.length > maxRows;
 
-  // Calculate the visible window based on selectedIndex
+  // Calculate the visible window
   let scrollOffset = 0;
-  let visibleCount = maxRows ?? data.length;
+  // When data exceeds maxRows, always reserve 1 row for the ▼ indicator
+  // so the row count stays consistent between selected/unselected states
+  let visibleCount = needsScroll ? Math.max(1, maxRows - 1) : (maxRows ?? data.length);
 
-  if (selectedIndex !== undefined && maxRows && data.length > maxRows) {
-    // First pass: compute raw offset to decide which indicators are needed
-    const rawOffset = Math.max(0, Math.min(selectedIndex - maxRows + 1, data.length - maxRows));
-    const willShowAbove = rawOffset > 0;
-    const willShowBelow = rawOffset + maxRows < data.length;
-
-    // Reduce visible rows to make room for indicators (1 row each)
-    const indicatorCount = (willShowAbove ? 1 : 0) + (willShowBelow ? 1 : 0);
-    visibleCount = maxRows - indicatorCount;
-
-    // Recalculate offset with adjusted visible count
+  if (needsScroll && selectedIndex !== undefined && selectedIndex >= 0) {
+    // Compute raw scroll position
     scrollOffset = Math.max(0, Math.min(selectedIndex - visibleCount + 1, data.length - visibleCount));
+
+    // If scrolled down, we also need ▲ — steal another row
+    if (scrollOffset > 0) {
+      visibleCount = maxRows! - 2; // 1 for ▲ + 1 for ▼
+      // Recompute offset with updated visible count
+      scrollOffset = Math.max(0, Math.min(selectedIndex - visibleCount + 1, data.length - visibleCount));
+    }
   }
 
   const rows = data.slice(scrollOffset, scrollOffset + visibleCount);
-  const hasMore = scrollOffset + visibleCount < data.length;
   const hasAbove = scrollOffset > 0;
+  const hasMore = scrollOffset + visibleCount < data.length;
 
   return (
     <Box flexDirection="column">
-      {/* Scroll up indicator */}
-      {hasAbove ? (
-        <Box justifyContent="center" width={totalWidth}>
-          <Text color="gray" dimColor>▲ {scrollOffset} more</Text>
-        </Box>
-      ) : null}
-
       {/* Header row */}
       <Box>
         {columns.map((col, i) => (
@@ -70,6 +64,13 @@ export default function Table({ columns, data, maxRows, selectedIndex }: TablePr
           </Box>
         ))}
       </Box>
+
+      {/* Scroll up indicator — below separator, in the data area */}
+      {hasAbove ? (
+        <Box justifyContent="center" width={totalWidth}>
+          <Text color="gray" dimColor>▲ {scrollOffset} more</Text>
+        </Box>
+      ) : null}
 
       {/* Data rows */}
       {rows.length === 0 ? (

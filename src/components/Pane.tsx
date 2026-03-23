@@ -32,7 +32,7 @@ export default function Pane({ title, emoji, isActive = false, paneNumber, width
           {emoji ? `${emoji} ` : ''}{title.toUpperCase()}
         </Text>
       </Box>
-      <Box flexDirection="column" flexGrow={1} marginTop={1}>
+      <Box flexDirection="column" flexGrow={1}>
         {children}
       </Box>
     </Box>
