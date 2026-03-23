@@ -33,7 +33,12 @@ export default function App() {
   });
 
   const [scrollIndex, setScrollIndex] = useState(0);
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [refreshKeys, setRefreshKeys] = useState<Record<PaneId, number>>({
+    netflow: 0,
+    'dex-trades': 0,
+    perp: 0,
+    wallet: 0, 
+  });
   const [notification, setNotification] = useState<Notification | null>(null);
   const [selectedToken, setSelectedToken] = useState<string | null>(null);
   
@@ -107,16 +112,29 @@ export default function App() {
       } catch { /* ignore */ }
     };
     doFetch();
-  }, [refreshKey]);
+  }, [refreshKeys.wallet]);
 
 
   const handleRefreshCurrent = useCallback(() => {
-    setRefreshKey((k) => k + 1);
+    setRefreshKeys((keys) => {
+      // Get current pane from state.activePane. We can't easily access state.activePane inside
+      // a setState callback for another state unless we use the latest value or closure.
+      // But we have it via the dependency array. 
+      return {
+        ...keys,
+        [state.activePane]: keys[state.activePane] + 1
+      };
+    });
     setState((s) => ({ ...s, lastRefresh: new Date(), apiCallCount: getApiCallCount() }));
-  }, []);
+  }, [state.activePane]);
 
   const handleRefreshAll = useCallback(() => {
-    setRefreshKey((k) => k + 1);
+    setRefreshKeys((keys) => ({
+      netflow: keys.netflow + 1,
+      'dex-trades': keys['dex-trades'] + 1,
+      perp: keys.perp + 1,
+      wallet: keys.wallet + 1,
+    }));
     setState((s) => ({ ...s, lastRefresh: new Date(), apiCallCount: getApiCallCount() }));
   }, []);
 
@@ -190,7 +208,12 @@ export default function App() {
   // Auto-refresh timer — only increments trigger, no full remount
   useEffect(() => {
     const timer = setInterval(() => {
-      setRefreshKey((k) => k + 1);
+      setRefreshKeys((keys) => ({
+        netflow: keys.netflow + 1,
+        'dex-trades': keys['dex-trades'] + 1,
+        perp: keys.perp + 1,
+        wallet: keys.wallet + 1,
+      }));
       setState((s) => ({ ...s, lastRefresh: new Date(), apiCallCount: getApiCallCount() }));
     }, 5 * 60_000); // 5 min — conserve API credits
     return () => clearInterval(timer);
@@ -280,7 +303,7 @@ export default function App() {
           chain={state.chain}
           isActive={state.activePane === 'netflow'}
           selectedIndex={state.activePane === 'netflow' ? scrollIndex : -1}
-          refreshTrigger={refreshKey}
+          refreshTrigger={refreshKeys.netflow}
           onHighlight={handleHighlight}
         />
         <DexTradesPane
@@ -288,7 +311,7 @@ export default function App() {
           isActive={state.activePane === 'dex-trades'}
           selectedIndex={state.activePane === 'dex-trades' ? scrollIndex : -1}
           isStreaming={state.isStreaming}
-          refreshTrigger={refreshKey}
+          refreshTrigger={refreshKeys['dex-trades']}
           onHighlight={handleHighlight}
         />
       </Box>
@@ -298,14 +321,14 @@ export default function App() {
         <PerpPane
           isActive={state.activePane === 'perp'}
           selectedIndex={state.activePane === 'perp' ? scrollIndex : -1}
-          refreshTrigger={refreshKey}
+          refreshTrigger={refreshKeys.perp}
           onHighlight={handleHighlight}
         />
         <WalletPane
           chain={state.chain}
           walletName={state.walletName}
           isActive={state.activePane === 'wallet'}
-          refreshTrigger={refreshKey}
+          refreshTrigger={refreshKeys.wallet}
           selectedIndex={state.activePane === 'wallet' ? scrollIndex : -1}
         />
       </Box>
