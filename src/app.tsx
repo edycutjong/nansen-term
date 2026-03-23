@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Box } from 'ink';
 import Header from './components/Header.js';
 import StatusBar from './components/StatusBar.js';
@@ -91,6 +91,15 @@ export default function App() {
     setScrollIndex((i) => i + 1);
   }, []);
 
+  // 60-second auto-refresh timer
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setRefreshKey((k) => k + 1);
+      setState((s) => ({ ...s, lastRefresh: new Date(), apiCallCount: getApiCallCount() }));
+    }, 60_000);
+    return () => clearInterval(timer);
+  }, []);
+
   useKeyboard({
     onCycleChain: handleCycleChain,
     onSwitchWallet: handleSwitchWallet,
@@ -153,6 +162,7 @@ export default function App() {
           chain={state.chain}
           isActive={state.activePane === 'dex-trades'}
           selectedIndex={state.activePane === 'dex-trades' ? scrollIndex : -1}
+          isStreaming={state.isStreaming}
         />
       </Box>
 
