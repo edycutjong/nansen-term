@@ -171,6 +171,76 @@ const generateBalance = () => [
   value_usd: b.balance * (TOKEN_DATA[b.token_symbol]?.price ?? 1),
 }));
 
+const generateTradeQuote = (args: string[]) => {
+  return {
+    quote_id: "mock_quote_" + randomHex(8),
+    expected_output: "0.985",
+    price_impact: "0.1%",
+    fee: "0.001",
+    route: ["ETH", "USDC"]
+  };
+};
+
+const generateTokenOHLCV = (args: string[]) => {
+  return Array.from({ length: 24 }).map((_, i) => ({
+    timestamp: new Date(Date.now() - i * 3600000).toISOString(),
+    open: 100 + Math.random() * 10,
+    high: 115 + Math.random() * 5,
+    low: 95 + Math.random() * 5,
+    close: 105 + Math.random() * 10,
+    volume: 1000000 + Math.random() * 500000
+  })).reverse();
+};
+
+const generateSearch = (args: string[]) => {
+  return [
+    { type: "token", name: "Ethereum", symbol: "ETH", address: TOKEN_DATA["ETH"]?.address },
+    { type: "token", name: "USD Coin", symbol: "USDC", address: TOKEN_DATA["USDC"]?.address },
+  ];
+};
+
+const generateAccount = () => {
+  return {
+    email: "demo@nansen.ai",
+    tier: "VIP",
+    credits_remaining: 50000,
+    credits_reset_at: new Date(Date.now() + 86400000).toISOString()
+  };
+};
+
+const generateSmartMoneyHoldings = (args: string[]) => {
+  return [
+    { token_symbol: "ETH", token_address: TOKEN_DATA["ETH"]?.address, balance: 150000, usd_value: 450000000 },
+    { token_symbol: "USDC", token_address: TOKEN_DATA["USDC"]?.address, balance: 120000000, usd_value: 120000000 },
+  ];
+};
+
+const generatePerpLeaderboard = (args: string[]) => {
+  return [
+    { address: fakeEvmAddress(), pnl_usd: 1500000, win_rate: 0.65, trades: 142 },
+    { address: fakeEvmAddress(), pnl_usd: 850000, win_rate: 0.58, trades: 89 },
+  ];
+};
+
+const generatePnlSummary = (args: string[]) => {
+  return {
+    total_realized_pnl_usd: 45000,
+    total_unrealized_pnl_usd: 12000,
+    win_rate: 0.55,
+    best_trade_usd: 8500,
+    worst_trade_usd: -2100
+  };
+};
+
+const generateTokenFlowIntelligence = (args: string[]) => {
+  return {
+    smart_money_inflow_24h: 1500000,
+    smart_money_outflow_24h: 800000,
+    exchange_inflow_24h: 5000000,
+    exchange_outflow_24h: 4200000
+  };
+};
+
 /**
  * Returns mock data for a given command or null if not matched.
  */
@@ -178,6 +248,7 @@ export function getMockData(command: string, args: string[] = []): unknown | nul
   if (command.includes('netflow'))           return generateNetflow(args);
   if (command.includes('dex-trades'))        return generateDexTrades(args);
   if (command.includes('perp screener'))     return generatePerps();
+  if (command.includes('perp leaderboard'))  return generatePerpLeaderboard(args);
   if (command.includes('wallet list'))       return { wallets: generateWalletList() };
   if (command.includes('wallet show')) {
     const nameIdx = args.indexOf('--name');
@@ -187,7 +258,14 @@ export function getMockData(command: string, args: string[] = []): unknown | nul
   }
   if (command.includes('token indicators'))  return generateTokenIndicators();
   if (command.includes('token info'))        return generateTokenInfo(args);
+  if (command.includes('token ohlcv'))       return generateTokenOHLCV(args);
+  if (command.includes('token flow-intelligence')) return generateTokenFlowIntelligence(args);
   if (command.includes('profiler balance'))  return generateBalance();
+  if (command.includes('profiler pnl-summary')) return generatePnlSummary(args);
+  if (command.includes('smart-money holdings')) return generateSmartMoneyHoldings(args);
+  if (command.includes('search'))            return generateSearch(args);
+  if (command.includes('account'))           return generateAccount();
+  if (command.includes('trade quote'))       return generateTradeQuote(args);
   return null;
 }
 
