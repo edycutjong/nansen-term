@@ -21,7 +21,7 @@ export default function Pane({ title, emoji, isActive = false, width, height, ch
       borderStyle="single"
       borderColor={borderColor}
       width={width}
-      height={height}
+      height={height ?? '100%'}
       paddingX={1}
     >
       <Box>
