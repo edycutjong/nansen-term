@@ -10,10 +10,7 @@ const randomHex = (len: number) =>
 
 const fakeEvmAddress = () => `0x${randomHex(40)}`;
 const fakeTxHash = () => `0x${randomHex(64)}`;
-const fakeSolAddress = () => {
-  const chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-  return Array.from({ length: 44 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-};
+// Removed fakeSolAddress
 
 // ─── Token Master Data ───
 
@@ -171,7 +168,7 @@ const generateBalance = () => [
   value_usd: b.balance * (TOKEN_DATA[b.token_symbol]?.price ?? 1),
 }));
 
-const generateTradeQuote = (args: string[]) => {
+const generateTradeQuote = (_args: string[]) => {
   return {
     quote_id: "mock_quote_" + randomHex(8),
     expected_output: "0.985",
@@ -181,7 +178,7 @@ const generateTradeQuote = (args: string[]) => {
   };
 };
 
-const generateTokenOHLCV = (args: string[]) => {
+const generateTokenOHLCV = (_args: string[]) => {
   return Array.from({ length: 24 }).map((_, i) => ({
     timestamp: new Date(Date.now() - i * 3600000).toISOString(),
     open: 100 + Math.random() * 10,
@@ -192,7 +189,7 @@ const generateTokenOHLCV = (args: string[]) => {
   })).reverse();
 };
 
-const generateSearch = (args: string[]) => {
+const generateSearch = (_args: string[]) => {
   return [
     { type: "token", name: "Ethereum", symbol: "ETH", address: TOKEN_DATA["ETH"]?.address },
     { type: "token", name: "USD Coin", symbol: "USDC", address: TOKEN_DATA["USDC"]?.address },
@@ -208,21 +205,21 @@ const generateAccount = () => {
   };
 };
 
-const generateSmartMoneyHoldings = (args: string[]) => {
+const generateSmartMoneyHoldings = (_args: string[]) => {
   return [
     { token_symbol: "ETH", token_address: TOKEN_DATA["ETH"]?.address, balance: 150000, usd_value: 450000000 },
     { token_symbol: "USDC", token_address: TOKEN_DATA["USDC"]?.address, balance: 120000000, usd_value: 120000000 },
   ];
 };
 
-const generatePerpLeaderboard = (args: string[]) => {
+const generatePerpLeaderboard = (_args: string[]) => {
   return [
     { address: fakeEvmAddress(), pnl_usd: 1500000, win_rate: 0.65, trades: 142 },
     { address: fakeEvmAddress(), pnl_usd: 850000, win_rate: 0.58, trades: 89 },
   ];
 };
 
-const generatePnlSummary = (args: string[]) => {
+const generatePnlSummary = (_args: string[]) => {
   return {
     total_realized_pnl_usd: 45000,
     total_unrealized_pnl_usd: 12000,
@@ -232,7 +229,7 @@ const generatePnlSummary = (args: string[]) => {
   };
 };
 
-const generateTokenFlowIntelligence = (args: string[]) => {
+const generateTokenFlowIntelligence = (_args: string[]) => {
   return {
     smart_money_inflow_24h: 1500000,
     smart_money_outflow_24h: 800000,
