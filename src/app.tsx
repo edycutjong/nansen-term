@@ -255,9 +255,13 @@ export default function App() {
     setScrollIndex((i) => Math.max(0, i - 1));
   }, []);
 
+  // Max visible rows per pane (must match each pane's Table maxRows prop)
+  const PANE_MAX_ROWS: Record<PaneId, number> = { netflow: 8, 'dex-trades': 7, perp: 8, wallet: 10 };
+
   const handleScrollDown = useCallback(() => {
-    setScrollIndex((i) => i + 1);
-  }, []);
+    const max = PANE_MAX_ROWS[state.activePane] - 1;
+    setScrollIndex((i) => Math.min(i + 1, max));
+  }, [state.activePane]);
 
   // Auto-refresh timer — only increments trigger, no full remount
   useEffect(() => {
