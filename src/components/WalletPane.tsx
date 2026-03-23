@@ -73,9 +73,10 @@ export default function WalletPane({
     return (
       <Pane title="Wallet" emoji="🏦" isActive={isActive} width="50%" height={height}>
         {walletCount === 0 ? (
-          <Box flexDirection="column">
+          <Box flexDirection="column" alignItems="center" paddingTop={2}>
             <Text color="gray">No wallets found.</Text>
             <Text color="gray">Run: nansen wallet create</Text>
+            <Text color="gray">Press <Text color="cyan">[A]</Text> for instructions.</Text>
           </Box>
         ) : (
           <Box flexDirection="column">
@@ -96,7 +97,7 @@ export default function WalletPane({
               );
             })}
             <Text> </Text>
-            <Text color="gray" dimColor>[Enter] Select  [W] Cycle</Text>
+            <Text color="gray" dimColor>[Enter] Select  [W] Cycle  [A] Add Wallet</Text>
           </Box>
         )}
       </Pane>
@@ -148,7 +149,7 @@ export default function WalletPane({
 
         {walletError && <Text color="red">{walletError}</Text>}
         <Box marginTop={1}>
-          <Text color="gray" dimColor>[Q] Get Quote  [X] Execute Trade  [W] Switch</Text>
+          <Text color="gray" dimColor>[Q] Quote  [X] Trade  [W] Switch  [A] Add</Text>
         </Box>
       </Box>
     </Pane>
