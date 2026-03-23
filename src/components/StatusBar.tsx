@@ -1,4 +1,6 @@
 import { Box, Text } from 'ink';
+import { useEffect, useState } from 'react';
+import { getApiCallCount } from '../lib/nansen.js';
 
 type NotificationType = 'info' | 'warn' | 'error';
 
@@ -10,7 +12,26 @@ interface StatusBarProps {
   notification?: { message: string; type: NotificationType } | null;
 }
 
-export default function StatusBar({ apiCallCount, lastRefresh, isStreaming, error, notification }: StatusBarProps) {
+export default function StatusBar({ apiCallCount: initialApiCallCount, lastRefresh, isStreaming, error, notification }: StatusBarProps) {
+  const [count, setCount] = useState(initialApiCallCount);
+
+  // Sync count if prop changes (e.g. from parent re-renders or tests)
+  useEffect(() => {
+    setCount(initialApiCallCount);
+  }, [initialApiCallCount]);
+
+  // Poll for the latest API call count to stay fresh without App re-renders
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const currentGlobalCount = getApiCallCount();
+      // Only update if it grew beyond the initial/current
+      if (currentGlobalCount > 0) {
+        setCount(prev => Math.max(prev, currentGlobalCount));
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const timeStr = lastRefresh
     ? lastRefresh.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })
     : '—';
@@ -24,7 +45,7 @@ export default function StatusBar({ apiCallCount, lastRefresh, isStreaming, erro
           <Text color="green">✓ Connected</Text>
         )}
         <Text color="gray"> · </Text>
-        <Text color="white">{apiCallCount} API call{apiCallCount === 1 ? '' : 's'}</Text>
+        <Text color="white">{count} API call{count === 1 ? '' : 's'}</Text>
         <Text color="gray"> · </Text>
         <Text color="white">Last refresh: {timeStr}</Text>
       </Box>
