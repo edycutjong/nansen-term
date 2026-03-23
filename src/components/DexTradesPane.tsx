@@ -72,18 +72,20 @@ export default function DexTradesPane({ chain, isActive, selectedIndex, isStream
     rows = snapRows;
   }
 
+  const clampedIndex = rows.length > 0 ? Math.min(selectedIndex, rows.length - 1) : -1;
+
   // Extract buyer token from swap string for token detail
   useEffect(() => {
     if (isActive && onHighlight) {
-      if (selectedIndex >= 0 && selectedIndex < rows.length) {
-        const swap = rows[selectedIndex]!.swap;
+      if (clampedIndex >= 0 && clampedIndex < rows.length) {
+        const swap = rows[clampedIndex]!.swap;
         const buyerToken = swap.split('→')[0]!.trim();
         onHighlight(buyerToken, 'dex-trades');
       } else {
         onHighlight(null, 'dex-trades');
       }
     }
-  }, [isActive, selectedIndex, rows.length, onHighlight]);
+  }, [isActive, clampedIndex, rows.length, onHighlight]);
 
   const modeLabel = streamActive ? '● LIVE' : '(Snapshot)';
   const title = `DEX Trades ${modeLabel}`;
@@ -113,7 +115,7 @@ export default function DexTradesPane({ chain, isActive, selectedIndex, isStream
           <Text color="gray">[S] stop streaming</Text>
         </Box>
       )}
-      <Table columns={COLUMNS} data={rows} maxRows={7} selectedIndex={isActive ? selectedIndex : undefined} />
+      <Table columns={COLUMNS} data={rows} maxRows={7} selectedIndex={isActive ? clampedIndex : undefined} />
     </Pane>
   );
 }

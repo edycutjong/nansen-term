@@ -93,7 +93,7 @@ describe('NetflowPane', () => {
     render(<NetflowPane chain="ethereum" isActive={true} selectedIndex={5} onHighlight={onHighlight} />);
     
     await new Promise(r => setTimeout(r, 0));
-    expect(onHighlight).toHaveBeenCalledWith(null, 'netflow');
+    expect(onHighlight).toHaveBeenCalledWith('UNI', 'netflow');
   });
 
   it('does not call onHighlight if not active', async () => {

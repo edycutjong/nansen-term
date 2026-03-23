@@ -34,15 +34,17 @@ export default function PerpPane({ isActive, selectedIndex, height, refreshTrigg
     oiChange: formatUSD(Number(entry.oi_change_24h ?? entry.oiChange24h ?? 0)),
   }));
 
+  const clampedIndex = rows.length > 0 ? Math.min(selectedIndex, rows.length - 1) : -1;
+
   React.useEffect(() => {
     if (isActive && onHighlight) {
-      if (selectedIndex !== undefined && selectedIndex >= 0 && selectedIndex < rows.length) {
-        onHighlight(rows[selectedIndex]!.symbol, 'perp');
+      if (clampedIndex >= 0 && clampedIndex < rows.length) {
+        onHighlight(rows[clampedIndex]!.symbol, 'perp');
       } else {
         onHighlight(null, 'perp');
       }
     }
-  }, [isActive, selectedIndex, rows, onHighlight]);
+  }, [isActive, clampedIndex, rows, onHighlight]);
   if (loading) {
     return (
       <Pane title="Perp Screener" emoji="📈" isActive={isActive} width="50%" height={height}>
@@ -61,7 +63,7 @@ export default function PerpPane({ isActive, selectedIndex, height, refreshTrigg
 
   return (
     <Pane title="Perp Screener" emoji="📈" isActive={isActive} width="50%" height={height}>
-      <Table columns={COLUMNS} data={rows} maxRows={8} selectedIndex={isActive ? selectedIndex : undefined} />
+      <Table columns={COLUMNS} data={rows} maxRows={8} selectedIndex={isActive ? clampedIndex : undefined} />
     </Pane>
   );
 }

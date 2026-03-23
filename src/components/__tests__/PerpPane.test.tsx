@@ -85,7 +85,7 @@ describe('PerpPane', () => {
     expect(frame).toContain('0.050%');
   });
 
-  it('clears highlight if selectedIndex is out of bounds', async () => {
+  it('clamps highlight to last row when selectedIndex exceeds data length', async () => {
     vi.mocked(useNansen).mockReturnValue({
       data: [{ symbol: 'UNI' }],
       loading: false,
@@ -95,6 +95,21 @@ describe('PerpPane', () => {
 
     const onHighlight = vi.fn();
     render(<PerpPane isActive={true} selectedIndex={5} onHighlight={onHighlight} />);
+    
+    await new Promise(r => setTimeout(r, 0));
+    expect(onHighlight).toHaveBeenCalledWith('UNI', 'perp');
+  });
+
+  it('clears highlight when data is empty', async () => {
+    vi.mocked(useNansen).mockReturnValue({
+      data: [],
+      loading: false,
+      error: null,
+      refresh: vi.fn(),
+    });
+
+    const onHighlight = vi.fn();
+    render(<PerpPane isActive={true} selectedIndex={0} onHighlight={onHighlight} />);
     
     await new Promise(r => setTimeout(r, 0));
     expect(onHighlight).toHaveBeenCalledWith(null, 'perp');

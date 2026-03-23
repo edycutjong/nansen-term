@@ -19,7 +19,7 @@
 
 **Minimum requirement: just a Nansen API key.** No wallet needed to view analytics.
 
-> **Terminal size:** minimum **120 columns × 24 rows**.  
+> **Terminal size:** minimum **120 columns × 32 rows**.  
 > For demo, **160×40** (or full-screen iTerm2/Terminal) is recommended.
 
 ```bash

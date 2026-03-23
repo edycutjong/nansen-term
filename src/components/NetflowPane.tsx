@@ -37,15 +37,17 @@ export default function NetflowPane({ chain, isActive, selectedIndex, height, re
     address: String(entry.token_address ?? entry.tokenAddress ?? ''),
   }));
 
+  const clampedIndex = rows.length > 0 ? Math.min(selectedIndex, rows.length - 1) : -1;
+
   React.useEffect(() => {
     if (isActive && onHighlight) {
-      if (selectedIndex !== undefined && selectedIndex >= 0 && selectedIndex < rows.length) {
-        onHighlight(rows[selectedIndex]!.address || rows[selectedIndex]!.token, 'netflow');
+      if (clampedIndex >= 0 && clampedIndex < rows.length) {
+        onHighlight(rows[clampedIndex]!.address || rows[clampedIndex]!.token, 'netflow');
       } else {
         onHighlight(null, 'netflow');
       }
     }
-  }, [isActive, selectedIndex, rows, onHighlight]);
+  }, [isActive, clampedIndex, rows, onHighlight]);
   if (loading) {
     return (
       <Pane title="Smart Money Netflow" emoji="📊" isActive={isActive} width="50%" height={height}>
@@ -64,7 +66,7 @@ export default function NetflowPane({ chain, isActive, selectedIndex, height, re
 
   return (
     <Pane title="Smart Money Netflow" emoji="📊" isActive={isActive} width="50%" height={height}>
-      <Table columns={COLUMNS} data={rows} maxRows={8} selectedIndex={isActive ? selectedIndex : undefined} />
+      <Table columns={COLUMNS} data={rows} maxRows={8} selectedIndex={isActive ? clampedIndex : undefined} />
     </Pane>
   );
 }
