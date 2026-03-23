@@ -608,7 +608,7 @@ describe('App', () => {
   // Close Overlay / Esc Key
   // ========================================
 
-  it('unselects wallet when Esc pressed and no overlay is open', async () => {
+  it('does nothing when Esc pressed and no overlay is open', async () => {
     (fetchWalletList as any).mockResolvedValue({
       success: true,
       data: [{ name: 'alpha-wallet' }],
@@ -622,12 +622,13 @@ describe('App', () => {
     await wait(50);
     expect(lastFrame()).toContain('alpha-wallet');
 
-    // Press Esc to unselect wallet
+    // Press Esc — should NOT unselect wallet (no overlay open)
     stdin.write('\x1B');
     await wait();
 
     const frame = lastFrame();
-    expect(frame).toContain('Wallet unselected');
+    expect(frame).toContain('alpha-wallet');
+    expect(frame).not.toContain('Wallet unselected');
   });
 
   it('closes all overlays on Esc', async () => {

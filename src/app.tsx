@@ -79,7 +79,7 @@ export default function App() {
 
   const showNotification = useCallback((message: string, type: NotificationType) => {
     setNotification({ message, type });
-    if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
+    clearTimeout(notifTimerRef.current as unknown as number);
     notifTimerRef.current = setTimeout(() => setNotification(null), 3000);
   }, []);
 
@@ -237,20 +237,14 @@ export default function App() {
   }, [state.activePane, state.walletName, scrollIndex, showNotification]);
 
   const handleCloseOverlay = useCallback(() => {
-    // If any overlay is open, close it first
+    // Only close overlays — do nothing when no overlay is open
     if (showTokenDetail || showTradeModal || showWalletModal || state.showHelp) {
       setState((s) => ({ ...s, showHelp: false }));
       setShowTokenDetail(false);
       setShowTradeModal(false);
       setShowWalletModal(false);
-      return;
     }
-    // No overlay open — if a wallet is selected, unselect it
-    if (state.walletName) {
-      setState((s) => ({ ...s, walletName: null }));
-      showNotification('Wallet unselected', 'info');
-    }
-  }, [showTokenDetail, showTradeModal, showWalletModal, state.showHelp, state.walletName, showNotification]);
+  }, [showTokenDetail, showTradeModal, showWalletModal, state.showHelp]);
 
   const handleSetActivePane = useCallback((pane: PaneId) => {
     setState((s) => ({ ...s, activePane: pane }));

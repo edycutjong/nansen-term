@@ -9,6 +9,6 @@ export default defineConfig({
       reporter: ['text', 'html', 'json'],
       exclude: ['node_modules/', 'dist/', 'vitest.config.ts'],
     },
-    include: ['**/*.{test,spec}.?(c|m)[jt]s?(x)'],
+    include: ['src/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
   },
 });
