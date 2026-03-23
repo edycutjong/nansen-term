@@ -182,7 +182,7 @@ export default function App() {
   // Overlays take over the screen
   if (state.showHelp) {
     return (
-      <Box flexDirection="column">
+      <Box flexDirection="column" height={totalRows}>
         <Header chain={state.chain} walletName={state.walletName} />
         <HelpOverlay />
       </Box>
@@ -191,7 +191,7 @@ export default function App() {
 
   if (state.showTokenDetail && state.selectedToken) {
     return (
-      <Box flexDirection="column">
+      <Box flexDirection="column" height={totalRows}>
         <Header chain={state.chain} walletName={state.walletName} />
         <TokenDetail chain={state.chain} tokenAddress={state.selectedToken} />
       </Box>
@@ -200,7 +200,7 @@ export default function App() {
 
   if (state.showTradeModal) {
     return (
-      <Box flexDirection="column">
+      <Box flexDirection="column" height={totalRows}>
         <Header chain={state.chain} walletName={state.walletName} />
         <TradeModal chain={state.chain} walletName={state.walletName} />
       </Box>
