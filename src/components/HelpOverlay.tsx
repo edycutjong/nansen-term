@@ -19,9 +19,10 @@ export default function HelpOverlay() {
         <Text><Text color="yellow" bold>C              </Text>  Cycle chain (18 chains)</Text>
         <Text><Text color="yellow" bold>W              </Text>  Switch wallet</Text>
         <Text><Text color="yellow" bold>Q              </Text>  Open trade quote modal</Text>
-        <Text><Text color="yellow" bold>X              </Text>  Execute quoted trade</Text>
+        <Text><Text color="yellow" bold>T              </Text>  Execute quoted trade</Text>
+        <Text><Text color="yellow" bold>A              </Text>  Add new wallet</Text>
         <Text><Text color="yellow" bold>R              </Text>  Refresh current pane</Text>
-        <Text><Text color="yellow" bold>A              </Text>  Refresh all panes</Text>
+        <Text><Text color="yellow" bold>P              </Text>  Refresh all panes</Text>
         <Text><Text color="yellow" bold>S              </Text>  Toggle streaming mode</Text>
         <Text><Text color="yellow" bold>?              </Text>  This help overlay</Text>
         <Text><Text color="yellow" bold>Esc            </Text>  Close overlay / go back</Text>

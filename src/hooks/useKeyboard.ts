@@ -83,7 +83,7 @@ export function useKeyboard(actions: KeyboardActions) {
       case 'w': actions.onSwitchWallet(); break;
       case 'a': actions.onAddWallet(); break;
       case 'r': actions.onRefreshCurrent(); break;
-      case 'r': actions.onRefreshCurrent(); break;
+      case 'p': actions.onRefreshAll(); break;
       case 's': actions.onToggleStreaming(); break;
       case 'q': actions.onOpenQuote(); break;
       case 't': actions.onExecuteTrade(); break;

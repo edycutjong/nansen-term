@@ -196,10 +196,14 @@ export default function App() {
     return () => clearInterval(timer);
   }, []);
 
-  // Hide terminal cursor to prevent blinking cursor artifact
+  // Hide terminal cursor and set window title
   useEffect(() => {
     process.stdout.write('\x1B[?25l'); // hide cursor
-    return () => { process.stdout.write('\x1B[?25h'); }; // restore on exit
+    process.stdout.write('\x1B]0;NansenTerm\x07'); // set terminal title
+    return () => { 
+      process.stdout.write('\x1B[?25h'); // restore cursor
+      process.stdout.write('\x1B]0;\x07'); // clear terminal title
+    };
   }, []);
 
   const { stdout } = useStdout();

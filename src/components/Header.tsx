@@ -20,7 +20,7 @@ export default function Header({ chain, walletName, version = '1.0.0', mode = 'h
     case 'home':
       shortcuts = (
         <Text color="gray">
-          ⌨ [Tab/←→] Switch Pane  [C] Chain  [W] Wallet  [A] Add Wallet  [Q] Quote  {walletName ? '[T] Trade  ' : ''}[R] Refresh  [?] Help  [Ctrl+C] Exit
+          ⌨ [Tab/←→] Switch Pane  [C] Chain  [W] Wallet  [Q] Quote  {walletName ? '[T] Trade  ' : ''}[R] Refresh  [?] Help  [Ctrl+C] Exit
         </Text>
       );
       break;
