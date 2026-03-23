@@ -76,9 +76,9 @@ export default function DexTradesPane({ chain, isActive, selectedIndex, isStream
   useEffect(() => {
     if (isActive && onHighlight) {
       if (selectedIndex >= 0 && selectedIndex < rows.length) {
-        const swap = rows[selectedIndex]?.swap ?? '';
-        const buyerToken = swap.split('→')[0] ?? null;
-        onHighlight(buyerToken || null, 'dex-trades');
+        const swap = rows[selectedIndex]!.swap;
+        const buyerToken = swap.split('→')[0]!.trim();
+        onHighlight(buyerToken, 'dex-trades');
       } else {
         onHighlight(null, 'dex-trades');
       }

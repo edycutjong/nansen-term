@@ -41,6 +41,7 @@ export default function WalletPane({
   const evmAddr = String(wallet.evm_address ?? wallet.evmAddress ?? wallet.address ?? '');
   const solAddr = String(wallet.solana_address ?? wallet.solanaAddress ?? '');
   const balanceAddr = chain === 'solana' ? solAddr : evmAddr;
+  const truncAddr = (addr: string) => addr.length > 20 ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : addr || '—';
 
   const { data: balanceData, loading: balanceLoading } = useNansen(
     'research profiler balance',
@@ -136,11 +137,11 @@ export default function WalletPane({
           <Box flexDirection="column" marginTop={1}>
             <Box>
               <Text color="gray">EVM:  </Text>
-              <Text color="white">{evmAddr.length > 20 ? `${evmAddr.slice(0, 6)}…${evmAddr.slice(-4)}` : evmAddr || '—'}</Text>
+              <Text color="white">{truncAddr(evmAddr)}</Text>
             </Box>
             <Box>
               <Text color="gray">SOL:  </Text>
-              <Text color="white">{solAddr.length > 20 ? `${solAddr.slice(0, 6)}…${solAddr.slice(-4)}` : solAddr || '—'}</Text>
+              <Text color="white">{truncAddr(solAddr)}</Text>
             </Box>
           </Box>
         )}

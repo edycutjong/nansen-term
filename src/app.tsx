@@ -15,6 +15,18 @@ import { nextChain, prevChain } from './lib/chains.js';
 import { fetchWalletList, getApiCallCount } from './lib/nansen.js';
 import type { PaneId, AppState } from './types/nansen.js';
 
+/** Hide terminal cursor and set window title */
+export function setupTerminal(): void {
+  process.stdout.write('\x1B[?25l');
+  process.stdout.write('\x1B]0;NansenTerm\x07');
+}
+
+/** Restore terminal cursor and clear window title */
+export function cleanupTerminal(): void {
+  process.stdout.write('\x1B[?25h');
+  process.stdout.write('\x1B]0;\x07');
+}
+
 type NotificationType = 'info' | 'warn' | 'error';
 interface Notification {
   message: string;
@@ -54,13 +66,11 @@ export default function App() {
   const walletIndexRef = useRef(0);
   const highlightedTokenRef = useRef<string | null>(null);
 
-  const handleHighlight = useCallback((token: string | null, pane: PaneId) => {
-    if (state.activePane === pane) {
-      highlightedTokenRef.current = token;
-    }
-  }, [state.activePane]);
+  const handleHighlight = useCallback((token: string | null, _pane: PaneId) => {
+    highlightedTokenRef.current = token;
+  }, []);
 
-  const showNotification = useCallback((message: string, type: NotificationType = 'info') => {
+  const showNotification = useCallback((message: string, type: NotificationType) => {
     setNotification({ message, type });
     if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
     notifTimerRef.current = setTimeout(() => setNotification(null), 3000);
@@ -264,12 +274,8 @@ export default function App() {
 
   // Hide terminal cursor and set window title
   useEffect(() => {
-    process.stdout.write('\x1B[?25l'); // hide cursor
-    process.stdout.write('\x1B]0;NansenTerm\x07'); // set terminal title
-    return () => { 
-      process.stdout.write('\x1B[?25h'); // restore cursor
-      process.stdout.write('\x1B]0;\x07'); // clear terminal title
-    };
+    setupTerminal();
+    return cleanupTerminal;
   }, []);
 
   const { stdout } = useStdout();

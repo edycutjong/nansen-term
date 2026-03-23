@@ -40,7 +40,7 @@ export default function NetflowPane({ chain, isActive, selectedIndex, height, re
   React.useEffect(() => {
     if (isActive && onHighlight) {
       if (selectedIndex !== undefined && selectedIndex >= 0 && selectedIndex < rows.length) {
-        onHighlight(rows[selectedIndex]?.address || rows[selectedIndex]?.token || null, 'netflow');
+        onHighlight(rows[selectedIndex]!.address || rows[selectedIndex]!.token, 'netflow');
       } else {
         onHighlight(null, 'netflow');
       }

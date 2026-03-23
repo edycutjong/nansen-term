@@ -1,7 +1,7 @@
 
 import { render } from 'ink-testing-library';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import App from '../app.js';
+import App, { setupTerminal, cleanupTerminal } from '../app.js';
 import { useNansen } from '../hooks/useNansen.js';
 import { getApiCallCount, fetchWalletList } from '../lib/nansen.js';
 import { useStream } from '../hooks/useStream.js';
@@ -85,6 +85,18 @@ describe('App', () => {
     expect(stdoutWriteSpy).toHaveBeenCalledWith('\x1B[?25l');
     expect(stdoutWriteSpy).toHaveBeenCalledWith('\x1B]0;NansenTerm\x07');
     vi.useFakeTimers({ shouldAdvanceTime: true });
+  });
+
+  it('cleanupTerminal restores cursor and clears title', () => {
+    cleanupTerminal();
+    expect(stdoutWriteSpy).toHaveBeenCalledWith('\x1B[?25h');
+    expect(stdoutWriteSpy).toHaveBeenCalledWith('\x1B]0;\x07');
+  });
+
+  it('setupTerminal hides cursor and sets title', () => {
+    setupTerminal();
+    expect(stdoutWriteSpy).toHaveBeenCalledWith('\x1B[?25l');
+    expect(stdoutWriteSpy).toHaveBeenCalledWith('\x1B]0;NansenTerm\x07');
   });
 
   // ========================================
@@ -312,6 +324,70 @@ describe('App', () => {
     expect(frame).toContain('beta-wallet');
   });
 
+  it('switches wallet from { wallets: [...] } format', async () => {
+    (fetchWalletList as any).mockResolvedValue({
+      success: true,
+      data: { wallets: [{ name: 'nested-w1' }, { name: 'nested-w2' }] },
+    });
+
+    const { lastFrame, stdin } = render(<App />);
+    await wait();
+
+    stdin.write('w');
+    await wait(50);
+
+    const frame = lastFrame();
+    expect(frame).toContain('nested-w2');
+  });
+
+  it('handles prevWallet with data object without wallets property', async () => {
+    (fetchWalletList as any).mockResolvedValue({
+      success: true,
+      data: { other: true },
+    });
+
+    const { lastFrame, stdin } = render(<App />);
+    await wait();
+
+    stdin.write('W');
+    await wait(50);
+
+    const frame = lastFrame();
+    expect(frame).toContain('No wallets found');
+  });
+
+  it('prevWallet uses ? for wallet without name fields', async () => {
+    (fetchWalletList as any).mockResolvedValue({
+      success: true,
+      data: [{ address: '0x123' }],
+    });
+
+    const { lastFrame, stdin } = render(<App />);
+    await wait();
+
+    stdin.write('W');
+    await wait(50);
+
+    const frame = lastFrame();
+    expect(frame).toContain('?');
+  });
+
+  it('handles wallet_name fallback field', async () => {
+    (fetchWalletList as any).mockResolvedValue({
+      success: true,
+      data: [{ wallet_name: 'fallback-name' }],
+    });
+
+    const { lastFrame, stdin } = render(<App />);
+    await wait();
+
+    stdin.write('w');
+    await wait(50);
+
+    const frame = lastFrame();
+    expect(frame).toContain('fallback-name');
+  });
+
   it('shows warning when no wallets found on switch', async () => {
     (fetchWalletList as any).mockResolvedValue({
       success: true,
@@ -339,6 +415,38 @@ describe('App', () => {
 
     const frame = lastFrame();
     expect(frame).toContain('Failed to fetch wallets');
+  });
+
+  it('handles data object without wallets property as no wallets', async () => {
+    (fetchWalletList as any).mockResolvedValue({
+      success: true,
+      data: { someOtherKey: 'value' }, // Not an array, no .wallets property
+    });
+
+    const { lastFrame, stdin } = render(<App />);
+    await wait();
+
+    stdin.write('w');
+    await wait(50);
+
+    const frame = lastFrame();
+    expect(frame).toContain('No wallets found');
+  });
+
+  it('uses ? when wallet has no name or wallet_name', async () => {
+    (fetchWalletList as any).mockResolvedValue({
+      success: true,
+      data: [{ id: 123 }], // No name or wallet_name field
+    });
+
+    const { lastFrame, stdin } = render(<App />);
+    await wait();
+
+    stdin.write('w');
+    await wait(50);
+
+    const frame = lastFrame();
+    expect(frame).toContain('?');
   });
 
   it('handles wallet list with wallets format', async () => {
@@ -383,6 +491,22 @@ describe('App', () => {
     await wait();
 
     stdin.write('w');
+    await wait(50);
+
+    const frame = lastFrame();
+    expect(frame).toContain('No wallets found');
+  });
+
+  it('handles prevWallet fetch failure (success: false)', async () => {
+    (fetchWalletList as any).mockResolvedValue({
+      success: false,
+      data: null,
+    });
+
+    const { lastFrame, stdin } = render(<App />);
+    await wait();
+
+    stdin.write('W');
     await wait(50);
 
     const frame = lastFrame();
@@ -683,5 +807,127 @@ describe('App', () => {
     const frame = lastFrame();
     // Wallet name still in header, but notification text should clear
     expect(frame).toContain('NansenTerm');
+  });
+
+  // ========================================
+  // handleSelectToken (Enter key)
+  // ========================================
+
+  it('picks wallet from list when Enter pressed on wallet pane without wallet', async () => {
+    (fetchWalletList as any).mockResolvedValue({
+      success: true,
+      data: [{ name: 'pick-wallet' }],
+    });
+
+    const { lastFrame, stdin } = render(<App />);
+    await wait();
+
+    // First do a wallet switch to populate walletListRef
+    stdin.write('w');
+    await wait(50);
+
+    // Navigate to wallet pane with Shift+Tab
+    stdin.write('\x1B[Z');
+    await wait();
+
+    // Press Enter to pick the wallet
+    stdin.write('\r');
+    await wait(50);
+
+    const frame = lastFrame();
+    expect(frame).toContain('pick-wallet');
+  });
+
+  it('does nothing when Enter pressed on wallet pane with no wallets available', async () => {
+    (fetchWalletList as any).mockResolvedValue({
+      success: true,
+      data: [],
+    });
+
+    const { lastFrame, stdin } = render(<App />);
+    await wait();
+
+    // Navigate to wallet pane
+    stdin.write('\x1B[Z');
+    await wait();
+
+    // Press Enter — nothing should happen since no wallets
+    stdin.write('\r');
+    await wait();
+
+    const frame = lastFrame();
+    expect(frame).toContain('NansenTerm');
+  });
+
+  it('does not open token detail when Enter pressed with no highlighted token', async () => {
+    const { lastFrame, stdin } = render(<App />);
+    await wait();
+
+    // Press Enter on netflow pane (default) — no highlighted token
+    stdin.write('\r');
+    await wait();
+
+    const frame = lastFrame();
+    // Should still show main view, not token detail
+    expect(frame).toContain('SMART MONEY NETFLOW');
+    expect(frame).not.toContain('Token:');
+  });
+
+  it('opens token detail when Enter pressed with highlighted token', async () => {
+    // Provide netflow data so highlight gets set
+    (useNansen as any).mockReturnValue({
+      data: [
+        { token_symbol: 'ETH', net_flow_24h_usd: 1000, net_flow_7d_usd: 5000, token_address: '0xETH' },
+      ],
+      loading: false,
+      error: null,
+      refresh: vi.fn(),
+    });
+
+    vi.useRealTimers();
+    const { lastFrame, stdin } = render(<App />);
+    await wait(100);
+
+    // Press Enter to select the highlighted token
+    stdin.write('\r');
+    await wait(100);
+
+    const frame = lastFrame();
+    // TokenDetail should open — verify by checking that the main 4-pane dashboard is replaced
+    // by the token detail overlay which contains a close instruction
+    expect(frame).toContain('Esc');
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+  });
+
+  it('uses default rows when stdout.rows is undefined', async () => {
+    // Override useStdout to return null stdout
+    const ink = await import('ink');
+    vi.mocked(ink.useStdout).mockReturnValue({ stdout: null } as any);
+
+    const { lastFrame } = render(<App />);
+    await wait();
+
+    // App should still render (using fallback 40 rows)
+    const frame = lastFrame();
+    expect(frame).toContain('NansenTerm');
+  });
+
+  it('populates walletListRef from mount useEffect with wallets format', async () => {
+    (fetchWalletList as any).mockResolvedValue({
+      success: true,
+      data: { wallets: [{ name: 'mount-w1' }] },
+    });
+
+    const { lastFrame, stdin } = render(<App />);
+    await wait(50);
+
+    // Navigate to wallet pane and press Enter to pick from mount-populated list
+    stdin.write('\x1B[Z');
+    await wait();
+    stdin.write('\r');
+    await wait(50);
+
+    const frame = lastFrame();
+    expect(frame).toContain('mount-w1');
   });
 });

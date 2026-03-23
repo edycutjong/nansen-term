@@ -181,4 +181,21 @@ describe('TradeModal', () => {
     const frame = lastFrame();
     expect(frame).toContain('—'); // fallback for missing fields
   });
+
+  it('shows dash for missing price_impact', async () => {
+    mockFetchTradeQuote.mockResolvedValueOnce({
+      success: true,
+      data: {
+        expected_output: '1.0',
+        fee: '0.01',
+      },
+    });
+
+    const { lastFrame } = render(<TradeModal chain="solana" walletName="test-wallet" mode="quote" />);
+    await new Promise((r) => setTimeout(r, 50));
+
+    const frame = lastFrame();
+    expect(frame).toContain('1.0'); // expected_output
+    expect(frame).toContain('Price Impact');
+  });
 });

@@ -64,7 +64,7 @@ export function useStream<T = unknown>(
     proc.stdout?.on('data', (chunk: Buffer) => {
       bufferRef.current += chunk.toString();
       const lines = bufferRef.current.split('\n');
-      bufferRef.current = lines.pop() ?? '';
+      bufferRef.current = lines.pop()!;
 
       for (const line of lines) {
         const trimmed = line.trim();

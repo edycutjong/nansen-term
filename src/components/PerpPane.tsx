@@ -37,7 +37,7 @@ export default function PerpPane({ isActive, selectedIndex, height, refreshTrigg
   React.useEffect(() => {
     if (isActive && onHighlight) {
       if (selectedIndex !== undefined && selectedIndex >= 0 && selectedIndex < rows.length) {
-        onHighlight(rows[selectedIndex]?.symbol || null, 'perp');
+        onHighlight(rows[selectedIndex]!.symbol, 'perp');
       } else {
         onHighlight(null, 'perp');
       }

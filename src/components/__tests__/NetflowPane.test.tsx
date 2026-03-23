@@ -128,4 +128,20 @@ describe('NetflowPane', () => {
     expect(frame).toContain('DAI');
     expect(frame).toContain('$123.00');
   });
+
+  it('highlights address when present', async () => {
+    vi.mocked(useNansen).mockReturnValue({
+      data: [
+        { token_symbol: 'LINK', net_flow_24h_usd: 100, token_address: '0xLINK' },
+      ],
+      loading: false,
+      error: null,
+      refresh: vi.fn(),
+    });
+
+    const onHighlight = vi.fn();
+    render(<NetflowPane chain="ethereum" isActive={true} selectedIndex={0} onHighlight={onHighlight} />);
+    await new Promise(r => setTimeout(r, 0));
+    expect(onHighlight).toHaveBeenCalledWith('0xLINK', 'netflow');
+  });
 });
