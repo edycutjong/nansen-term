@@ -97,7 +97,7 @@ export default function WalletPane({
               );
             })}
             <Text> </Text>
-            <Text color="gray" dimColor>[Enter] Select  [W] Cycle  [A] Add Wallet</Text>
+            <Text color="gray" dimColor>[A] Add Wallet</Text>
           </Box>
         )}
       </Pane>

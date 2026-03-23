@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { spawnNansenStream } from '../lib/nansen.js';
 import type { ChildProcess } from 'node:child_process';
+import { IS_MOCK, getMockData } from '../lib/mock.js';
 
 interface UseStreamResult<T> {
   items: T[];
@@ -23,6 +24,7 @@ export function useStream<T = unknown>(
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const processRef = useRef<ChildProcess | null>(null);
+  const mockTimerRef = useRef<NodeJS.Timeout | null>(null);
   const bufferRef = useRef('');
 
   const stop = useCallback(() => {
@@ -30,13 +32,31 @@ export function useStream<T = unknown>(
       processRef.current.kill();
       processRef.current = null;
     }
+    if (mockTimerRef.current) {
+      clearInterval(mockTimerRef.current);
+      mockTimerRef.current = null;
+    }
     setIsStreaming(false);
   }, []);
 
   const start = useCallback(() => {
-    stop(); // Kill any existing process
+    stop(); // Kill any existing process/timer
     setError(null);
     setIsStreaming(true);
+
+    if (IS_MOCK) {
+      mockTimerRef.current = setInterval(() => {
+        const mockArray = getMockData(command, args) as T[];
+        if (Array.isArray(mockArray) && mockArray.length > 0) {
+          const item = mockArray[0]!;
+          setItems((prev) => {
+            const next = [item, ...prev];
+            return next.slice(0, maxItems);
+          });
+        }
+      }, 2000);
+      return;
+    }
 
     const proc = spawnNansenStream(command, args);
     processRef.current = proc;
@@ -52,6 +72,11 @@ export function useStream<T = unknown>(
 
         try {
           const parsed = JSON.parse(trimmed);
+          if (parsed.success === false) {
+             setError(parsed.error || 'Stream error');
+             stop();
+             return;
+          }
           const item = parsed.data ?? parsed;
           setItems((prev) => {
             const next = [item as T, ...prev];

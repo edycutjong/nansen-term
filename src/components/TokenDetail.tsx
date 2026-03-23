@@ -96,9 +96,6 @@ export default function TokenDetail({ chain, tokenAddress }: TokenDetailProps) {
           <Text color="yellow">{formatNumber(Number(indicators.smart_money_score ?? indicators.smartMoneyScore ?? 0))}</Text>
         </Box>
       </Box>
-
-      <Text> </Text>
-      <Text color="gray" dimColor>[Esc] Close</Text>
     </Box>
   );
 }
