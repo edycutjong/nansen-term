@@ -27,23 +27,6 @@ export default function PerpPane({ isActive, selectedIndex, height, refreshTrigg
     true,
     refreshTrigger,
   );
-
-  if (loading) {
-    return (
-      <Pane title="Perp Screener" emoji="📈" isActive={isActive} width="50%" height={height}>
-        <Text color="yellow">Loading...</Text>
-      </Pane>
-    );
-  }
-
-  if (error) {
-    return (
-      <Pane title="Perp Screener" emoji="📈" isActive={isActive} width="50%" height={height}>
-        <Text color="red">{error}</Text>
-      </Pane>
-    );
-  }
-
   const entries = Array.isArray(data) ? data : (data as Record<string, unknown>)?.rows ?? (data as Record<string, unknown>)?.data ?? [];
   const rows = (entries as Record<string, unknown>[]).map((entry) => ({
     symbol: String(entry.symbol ?? '—'),
@@ -60,6 +43,21 @@ export default function PerpPane({ isActive, selectedIndex, height, refreshTrigg
       }
     }
   }, [isActive, selectedIndex, rows, onHighlight]);
+  if (loading) {
+    return (
+      <Pane title="Perp Screener" emoji="📈" isActive={isActive} width="50%" height={height}>
+        <Text color="yellow">Loading...</Text>
+      </Pane>
+    );
+  }
+
+  if (error) {
+    return (
+      <Pane title="Perp Screener" emoji="📈" isActive={isActive} width="50%" height={height}>
+        <Text color="red">{error}</Text>
+      </Pane>
+    );
+  }
 
   return (
     <Pane title="Perp Screener" emoji="📈" isActive={isActive} width="50%" height={height}>

@@ -28,23 +28,6 @@ export default function NetflowPane({ chain, isActive, selectedIndex, height, re
     true,
     refreshTrigger,
   );
-
-  if (loading) {
-    return (
-      <Pane title="Smart Money Netflow" emoji="📊" isActive={isActive} width="50%" height={height}>
-        <Text color="yellow">Loading...</Text>
-      </Pane>
-    );
-  }
-
-  if (error) {
-    return (
-      <Pane title="Smart Money Netflow" emoji="📊" isActive={isActive} width="50%" height={height}>
-        <Text color="red">{error}</Text>
-      </Pane>
-    );
-  }
-
   // Parse the data — the actual structure depends on the Nansen API response
   const entries = Array.isArray(data) ? data : (data as Record<string, unknown>)?.rows ?? (data as Record<string, unknown>)?.data ?? [];
   const rows = (entries as Record<string, unknown>[]).map((entry) => ({
@@ -63,6 +46,21 @@ export default function NetflowPane({ chain, isActive, selectedIndex, height, re
       }
     }
   }, [isActive, selectedIndex, rows, onHighlight]);
+  if (loading) {
+    return (
+      <Pane title="Smart Money Netflow" emoji="📊" isActive={isActive} width="50%" height={height}>
+        <Text color="yellow">Loading...</Text>
+      </Pane>
+    );
+  }
+
+  if (error) {
+    return (
+      <Pane title="Smart Money Netflow" emoji="📊" isActive={isActive} width="50%" height={height}>
+        <Text color="red">{error}</Text>
+      </Pane>
+    );
+  }
 
   return (
     <Pane title="Smart Money Netflow" emoji="📊" isActive={isActive} width="50%" height={height}>
