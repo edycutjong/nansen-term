@@ -225,7 +225,7 @@ export default function App() {
       )}
 
       {/* Top row: Netflow + DEX Trades */}
-      <Box flexGrow={1}>
+      <Box flexBasis="50%" flexGrow={1}>
         <NetflowPane
           chain={state.chain}
           isActive={state.activePane === 'netflow'}
@@ -243,7 +243,7 @@ export default function App() {
       </Box>
 
       {/* Bottom row: Perp + Wallet */}
-      <Box flexGrow={1}>
+      <Box flexBasis="50%" flexGrow={1}>
         <PerpPane
           isActive={state.activePane === 'perp'}
           selectedIndex={state.activePane === 'perp' ? scrollIndex : -1}
