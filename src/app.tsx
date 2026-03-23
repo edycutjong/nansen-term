@@ -40,6 +40,13 @@ export default function App() {
   const notifTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const walletListRef = useRef<string[]>([]);
   const walletIndexRef = useRef(0);
+  const highlightedTokenRef = useRef<string | null>(null);
+
+  const handleHighlight = useCallback((token: string | null, pane: PaneId) => {
+    if (state.activePane === pane) {
+      highlightedTokenRef.current = token;
+    }
+  }, [state.activePane]);
 
   const showNotification = useCallback((message: string, type: NotificationType = 'info') => {
     setNotification({ message, type });
@@ -108,7 +115,9 @@ export default function App() {
   }, []);
 
   const handleSelectToken = useCallback(() => {
-    setState((s) => ({ ...s, showTokenDetail: true }));
+    if (highlightedTokenRef.current) {
+      setState((s) => ({ ...s, selectedToken: highlightedTokenRef.current, showTokenDetail: true }));
+    }
   }, []);
 
   const handleCloseOverlay = useCallback(() => {
@@ -222,6 +231,7 @@ export default function App() {
           isActive={state.activePane === 'netflow'}
           selectedIndex={state.activePane === 'netflow' ? scrollIndex : -1}
           refreshTrigger={refreshKey}
+          onHighlight={handleHighlight}
         />
         <DexTradesPane
           chain={state.chain}
@@ -238,6 +248,7 @@ export default function App() {
           isActive={state.activePane === 'perp'}
           selectedIndex={state.activePane === 'perp' ? scrollIndex : -1}
           refreshTrigger={refreshKey}
+          onHighlight={handleHighlight}
         />
         <WalletPane
           chain={state.chain}

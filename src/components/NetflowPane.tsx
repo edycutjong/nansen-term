@@ -4,7 +4,7 @@ import Pane from './Pane.js';
 import Table from './Table.js';
 import { useNansen } from '../hooks/useNansen.js';
 import { formatUSD } from '../lib/formatter.js';
-import type { Chain } from '../types/nansen.js';
+import type { Chain, PaneId } from '../types/nansen.js';
 
 interface NetflowPaneProps {
   chain: Chain;
@@ -12,6 +12,7 @@ interface NetflowPaneProps {
   selectedIndex: number;
   height?: number;
   refreshTrigger?: number;
+  onHighlight?: (token: string | null, pane: PaneId) => void;
 }
 
 const COLUMNS = [
@@ -20,7 +21,7 @@ const COLUMNS = [
   { header: '7d Flow', key: 'flow7d', width: 12, align: 'right' as const },
 ];
 
-export default function NetflowPane({ chain, isActive, selectedIndex, height, refreshTrigger = 0 }: NetflowPaneProps) {
+export default function NetflowPane({ chain, isActive, selectedIndex, height, refreshTrigger = 0, onHighlight }: NetflowPaneProps) {
   const { data, loading, error } = useNansen(
     'research smart-money netflow',
     ['--chain', chain, '--limit', '10'],
@@ -52,6 +53,16 @@ export default function NetflowPane({ chain, isActive, selectedIndex, height, re
     flow7d: formatUSD(Number(entry.net_flow_7d_usd ?? entry.netFlow7d ?? entry.net_flow_7d ?? 0)),
     address: String(entry.token_address ?? entry.tokenAddress ?? ''),
   }));
+
+  React.useEffect(() => {
+    if (isActive && onHighlight) {
+      if (selectedIndex !== undefined && selectedIndex >= 0 && selectedIndex < rows.length) {
+        onHighlight(rows[selectedIndex]?.address || rows[selectedIndex]?.token || null, 'netflow');
+      } else {
+        onHighlight(null, 'netflow');
+      }
+    }
+  }, [isActive, selectedIndex, rows, onHighlight]);
 
   return (
     <Pane title="Smart Money Netflow" emoji="📊" isActive={isActive} width="50%" height={height}>
