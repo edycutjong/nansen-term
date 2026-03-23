@@ -8,6 +8,7 @@ import { formatUSD, formatPercent } from '../lib/formatter.js';
 interface PerpPaneProps {
   isActive: boolean;
   selectedIndex: number;
+  height?: number;
 }
 
 const COLUMNS = [
@@ -16,7 +17,7 @@ const COLUMNS = [
   { header: 'OI Change', key: 'oiChange', width: 12, align: 'right' as const },
 ];
 
-export default function PerpPane({ isActive, selectedIndex }: PerpPaneProps) {
+export default function PerpPane({ isActive, selectedIndex, height }: PerpPaneProps) {
   const { data, loading, error } = useNansen(
     'research perp screener',
     ['--limit', '10'],
@@ -24,7 +25,7 @@ export default function PerpPane({ isActive, selectedIndex }: PerpPaneProps) {
 
   if (loading) {
     return (
-      <Pane title="Perp Screener" emoji="📈" isActive={isActive} width="50%">
+      <Pane title="Perp Screener" emoji="📈" isActive={isActive} width="50%" height={height}>
         <Text color="yellow">Loading...</Text>
       </Pane>
     );
@@ -32,7 +33,7 @@ export default function PerpPane({ isActive, selectedIndex }: PerpPaneProps) {
 
   if (error) {
     return (
-      <Pane title="Perp Screener" emoji="📈" isActive={isActive} width="50%">
+      <Pane title="Perp Screener" emoji="📈" isActive={isActive} width="50%" height={height}>
         <Text color="red">{error}</Text>
       </Pane>
     );
@@ -46,7 +47,7 @@ export default function PerpPane({ isActive, selectedIndex }: PerpPaneProps) {
   }));
 
   return (
-    <Pane title="Perp Screener" emoji="📈" isActive={isActive} width="50%">
+    <Pane title="Perp Screener" emoji="📈" isActive={isActive} width="50%" height={height}>
       <Table columns={COLUMNS} data={rows} maxRows={8} selectedIndex={isActive ? selectedIndex : undefined} />
     </Pane>
   );

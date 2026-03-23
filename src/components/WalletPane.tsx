@@ -9,9 +9,10 @@ interface WalletPaneProps {
   chain: Chain;
   walletName: string | null;
   isActive: boolean;
+  height?: number;
 }
 
-export default function WalletPane({ chain, walletName, isActive }: WalletPaneProps) {
+export default function WalletPane({ chain, walletName, isActive, height }: WalletPaneProps) {
   // Fetch wallet list first
   const { data: walletListData, loading: listLoading } = useNansen(
     'wallet list',
@@ -27,7 +28,7 @@ export default function WalletPane({ chain, walletName, isActive }: WalletPanePr
 
   if (listLoading || walletLoading) {
     return (
-      <Pane title="Wallet" emoji="🏦" isActive={isActive} width="50%">
+      <Pane title="Wallet" emoji="🏦" isActive={isActive} width="50%" height={height}>
         <Text color="yellow">Loading...</Text>
       </Pane>
     );
@@ -40,7 +41,7 @@ export default function WalletPane({ chain, walletName, isActive }: WalletPanePr
       : (walletListData as Record<string, unknown>)?.wallets ?? [];
 
     return (
-      <Pane title="Wallet" emoji="🏦" isActive={isActive} width="50%">
+      <Pane title="Wallet" emoji="🏦" isActive={isActive} width="50%" height={height}>
         {(wallets as Record<string, unknown>[]).length === 0 ? (
           <Box flexDirection="column">
             <Text color="gray">No wallets found.</Text>
@@ -67,7 +68,7 @@ export default function WalletPane({ chain, walletName, isActive }: WalletPanePr
   const solAddr = String(wallet.solana_address ?? wallet.solanaAddress ?? '—');
 
   return (
-    <Pane title="Wallet" emoji="🏦" isActive={isActive} width="50%">
+    <Pane title="Wallet" emoji="🏦" isActive={isActive} width="50%" height={height}>
       <Box flexDirection="column">
         <Box>
           <Text color="gray">Name: </Text>

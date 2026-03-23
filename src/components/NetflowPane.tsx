@@ -10,6 +10,7 @@ interface NetflowPaneProps {
   chain: Chain;
   isActive: boolean;
   selectedIndex: number;
+  height?: number;
 }
 
 const COLUMNS = [
@@ -18,7 +19,7 @@ const COLUMNS = [
   { header: '7d Flow', key: 'flow7d', width: 12, align: 'right' as const },
 ];
 
-export default function NetflowPane({ chain, isActive, selectedIndex }: NetflowPaneProps) {
+export default function NetflowPane({ chain, isActive, selectedIndex, height }: NetflowPaneProps) {
   const { data, loading, error } = useNansen(
     'research smart-money netflow',
     ['--chain', chain, '--limit', '10'],
@@ -26,7 +27,7 @@ export default function NetflowPane({ chain, isActive, selectedIndex }: NetflowP
 
   if (loading) {
     return (
-      <Pane title="Smart Money Netflow" emoji="📊" isActive={isActive} width="50%">
+      <Pane title="Smart Money Netflow" emoji="📊" isActive={isActive} width="50%" height={height}>
         <Text color="yellow">Loading...</Text>
       </Pane>
     );
@@ -34,7 +35,7 @@ export default function NetflowPane({ chain, isActive, selectedIndex }: NetflowP
 
   if (error) {
     return (
-      <Pane title="Smart Money Netflow" emoji="📊" isActive={isActive} width="50%">
+      <Pane title="Smart Money Netflow" emoji="📊" isActive={isActive} width="50%" height={height}>
         <Text color="red">{error}</Text>
       </Pane>
     );
@@ -50,7 +51,7 @@ export default function NetflowPane({ chain, isActive, selectedIndex }: NetflowP
   }));
 
   return (
-    <Pane title="Smart Money Netflow" emoji="📊" isActive={isActive} width="50%">
+    <Pane title="Smart Money Netflow" emoji="📊" isActive={isActive} width="50%" height={height}>
       <Table columns={COLUMNS} data={rows} maxRows={8} selectedIndex={isActive ? selectedIndex : undefined} />
     </Pane>
   );
