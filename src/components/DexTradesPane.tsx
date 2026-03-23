@@ -117,12 +117,12 @@ export default function DexTradesPane({ chain, isActive, selectedIndex, isStream
   return (
     <Pane title={title} emoji="🔄" isActive={isActive} paneNumber={paneNumber} width="50%" height={height}>
       {isStreaming && (
-        <Box marginBottom={1}>
+        <Box>
           <Text color="magenta">● {rows.length} trades  </Text>
           <Text color="gray">[S] stop streaming</Text>
         </Box>
       )}
-      <Table columns={COLUMNS} data={rows} maxRows={isStreaming ? Math.max(1, maxRows - 2) : maxRows} selectedIndex={isActive ? clampedIndex : undefined} />
+      <Table columns={COLUMNS} data={rows} maxRows={isStreaming ? Math.max(1, maxRows - 1) : maxRows} selectedIndex={isActive ? clampedIndex : undefined} />
     </Pane>
   );
 }
