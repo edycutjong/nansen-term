@@ -1,5 +1,6 @@
 import { execFile, spawn } from 'node:child_process';
 import type { NansenResponse } from '../types/nansen.js';
+import { IS_MOCK, getMockData } from './mock.js';
 
 /**
  * Execute a nansen CLI command and parse the JSON output.
@@ -8,6 +9,19 @@ export function execNansen<T = unknown>(
   command: string,
   args: string[] = [],
 ): Promise<NansenResponse<T>> {
+  if (IS_MOCK) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const mock = getMockData(command);
+        if (mock !== null) {
+          resolve({ success: true, data: mock as T });
+        } else {
+          resolve({ success: false, error: '[MOCK] No data for: ' + command });
+        }
+      }, 300);
+    });
+  }
+
   return new Promise((resolve) => {
     const fullArgs = [...command.split(' '), ...args, '--pretty'];
 
