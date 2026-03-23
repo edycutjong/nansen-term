@@ -11,7 +11,7 @@
 - 📊 **Multi-pane layout** — Smart Money flows, DEX trades, perp data, and wallet info side-by-side
 - 🔄 **Live data streaming** — NDJSON streaming for real-time DEX trade updates
 - ⌨️ **Keyboard navigation** — Tab between panes, arrow keys to scroll, hotkeys for actions
-- 💱 **1-keystroke trading** — `[Q]` for swap quote, `[X]` to execute via `trade quote`/`trade execute`
+- 💱 **1-keystroke trading** — `[Q]` for swap quote, `[T]` to execute via `trade quote`/`trade execute`
 - 🔗 **18-chain support** — Cycle through all supported chains with `[C]`
 - 📋 **Clean tables** — Formatted ASCII tables, not raw JSON walls
 
@@ -36,7 +36,7 @@ npm --silent run demo  # no npm header lines at all
 ```
 
 > **Wallet is optional.** The Netflow, DEX Trades, and Perp panes work without a wallet.
-> Only the `[Q]` trade quote and `[X]` execute features require one:
+> Only the `[Q]` trade quote and `[T]` execute features require one:
 > ```bash
 > nansen wallet create   # only needed for trading
 > ```
@@ -116,8 +116,11 @@ npm --silent run demo  # no npm header lines at all
 
 ```bash
 npm run dev       # Run with tsx (hot reload)
+npm run mock      # Run with mock data (no API credits)
 npm run build     # Compile TypeScript
 npm start         # Run compiled version
+npm test          # Run 169 tests with Vitest
+npm test -- --coverage  # Tests with Istanbul coverage report
 ```
 
 ## Built For
