@@ -3,7 +3,7 @@ import { Box, Text } from 'ink';
 
 export default function WalletModal() {
   return (
-    <Box flexDirection="column" borderStyle="double" borderColor="yellow" paddingX={2} paddingY={1}>
+    <Box flexDirection="column" borderStyle="double" borderColor="gray" paddingX={2} paddingY={1}>
       <Text color="yellow" bold>👛 ADD NEW WALLET</Text>
       <Text> </Text>
       <Text color="gray">To add a new wallet, open a <Text bold color="white">separate terminal window</Text></Text>

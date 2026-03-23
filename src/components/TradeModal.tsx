@@ -16,7 +16,7 @@ export default function TradeModal({ chain, walletName }: TradeModalProps) {
   // Check if chain supports trading
   if (!meta.supportsTrading) {
     return (
-      <Box flexDirection="column" borderStyle="double" borderColor="yellow" paddingX={2} paddingY={1}>
+      <Box flexDirection="column" borderStyle="double" borderColor="gray" paddingX={2} paddingY={1}>
         <Text color="yellow" bold>💱 TRADE</Text>
         <Text> </Text>
         <Text color="red">Trading only supported on Solana and Base.</Text>
@@ -30,7 +30,7 @@ export default function TradeModal({ chain, walletName }: TradeModalProps) {
 
   if (!walletName) {
     return (
-      <Box flexDirection="column" borderStyle="double" borderColor="yellow" paddingX={2} paddingY={1}>
+      <Box flexDirection="column" borderStyle="double" borderColor="gray" paddingX={2} paddingY={1}>
         <Text color="yellow" bold>💱 TRADE</Text>
         <Text> </Text>
         <Text color="red">No wallet selected.</Text>
@@ -47,7 +47,7 @@ export default function TradeModal({ chain, walletName }: TradeModalProps) {
   // For now, we show the quote command the user would run
 
   return (
-    <Box flexDirection="column" borderStyle="double" borderColor="green" paddingX={2} paddingY={1}>
+    <Box flexDirection="column" borderStyle="double" borderColor="gray" paddingX={2} paddingY={1}>
       <Text color="green" bold>💱 TRADE QUOTE</Text>
       <Text> </Text>
 

@@ -22,7 +22,7 @@ export default function TokenDetail({ chain, tokenAddress }: TokenDetailProps) {
 
   if (infoLoading || indicatorLoading) {
     return (
-      <Box flexDirection="column" borderStyle="double" borderColor="cyan" paddingX={2} paddingY={1}>
+      <Box flexDirection="column" borderStyle="double" borderColor="gray" paddingX={2} paddingY={1}>
         <Text color="cyan" bold>🔍 TOKEN DETAIL</Text>
         <Text color="yellow">Loading token data...</Text>
       </Box>
@@ -33,7 +33,7 @@ export default function TokenDetail({ chain, tokenAddress }: TokenDetailProps) {
   const indicators = (indicatorData ?? {}) as Record<string, unknown>;
 
   return (
-    <Box flexDirection="column" borderStyle="double" borderColor="cyan" paddingX={2} paddingY={1}>
+    <Box flexDirection="column" borderStyle="double" borderColor="gray" paddingX={2} paddingY={1}>
       <Text color="cyan" bold>🔍 TOKEN DETAIL</Text>
       <Text> </Text>
 
