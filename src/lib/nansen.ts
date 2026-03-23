@@ -160,6 +160,16 @@ export async function fetchTradeQuote(
   return execNansen('trade quote', args);
 }
 
+export async function fetchTradeExecute(
+  chain: string,
+  wallet?: string,
+) {
+  incrementApiCallCount();
+  const args = ['--chain', chain];
+  if (wallet) args.push('--wallet', wallet);
+  return execNansen('trade execute', args);
+}
+
 export async function fetchSearch(query: string) {
   incrementApiCallCount();
   return execNansen('research search', ['--query', query]);

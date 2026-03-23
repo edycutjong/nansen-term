@@ -276,6 +276,7 @@ export function getMockData(command: string, args: string[] = []): unknown | nul
   if (command.includes('search'))            return generateSearch(args);
   if (command.includes('account'))           return generateAccount();
   if (command.includes('trade quote'))       return generateTradeQuote(args);
+  if (command.includes('trade execute'))      return { tx_hash: `0x${randomHex(64)}`, status: 'confirmed', chain: 'solana' };
   return null;
 }
 

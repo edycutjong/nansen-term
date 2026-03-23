@@ -46,6 +46,7 @@ export default function App() {
   const [showTokenDetail, setShowTokenDetail] = useState(false);
   const [showTradeModal, setShowTradeModal] = useState(false);
   const [showWalletModal, setShowWalletModal] = useState(false);
+  const [tradeMode, setTradeMode] = useState<'quote' | 'execute'>('quote');
   
   // Data streaming state
   const notifTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -184,6 +185,7 @@ export default function App() {
     setState((s) => ({ ...s, showHelp: false }));
     setShowTokenDetail(false);
     setShowWalletModal(false);
+    setTradeMode('quote');
     setShowTradeModal(true);
   }, []);
 
@@ -191,6 +193,7 @@ export default function App() {
     setState((s) => ({ ...s, showHelp: false }));
     setShowTokenDetail(false);
     setShowWalletModal(false);
+    setTradeMode('execute');
     setShowTradeModal(true);
   }, []);
 
@@ -319,7 +322,7 @@ export default function App() {
     return (
       <Box flexDirection="column" height={totalRows}>
         <Header chain={state.chain} walletName={state.walletName} mode="trade" />
-        <TradeModal chain={state.chain} walletName={state.walletName} />
+        <TradeModal chain={state.chain} walletName={state.walletName} mode={tradeMode} selectedToken={selectedToken} />
       </Box>
     );
   }
