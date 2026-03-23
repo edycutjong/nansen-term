@@ -7,9 +7,10 @@ interface HeaderProps {
   chain: Chain;
   walletName: string | null;
   version?: string;
+  hasOverlay?: boolean;
 }
 
-export default function Header({ chain, walletName, version = '1.0.0' }: HeaderProps) {
+export default function Header({ chain, walletName, version = '1.0.0', hasOverlay = false }: HeaderProps) {
   const meta = CHAIN_META[chain];
 
   return (
@@ -29,9 +30,15 @@ export default function Header({ chain, walletName, version = '1.0.0' }: HeaderP
         </Box>
       </Box>
       <Box>
-        <Text color="gray">
-          ⌨ [Tab] Switch Pane  [C] Chain  [W] Wallet  [Q] Quote  [R] Refresh  [?] Help  [Ctrl+C] Exit
-        </Text>
+        {hasOverlay ? (
+          <Text color="gray">
+            ⌨ <Text color="cyan">[Q] Quote  [X] Trade  [C] Chain</Text>  [Esc] Close
+          </Text>
+        ) : (
+          <Text color="gray">
+            ⌨ [Tab/←→] Switch Pane  [C] Chain  [W] Wallet  [Q] Quote  [R] Refresh  [?] Help  [Ctrl+C] Exit
+          </Text>
+        )}
       </Box>
     </Box>
   );

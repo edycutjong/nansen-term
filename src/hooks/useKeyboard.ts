@@ -31,12 +31,13 @@ export function useKeyboard(actions: KeyboardActions) {
       return;
     }
 
-    // If an overlay is open, don't process most other keys
-    // But DO allow jumping to the Trade Modal (Q/X) from other overlays
+    // If an overlay is open, only allow a subset of keys
     if (actions.hasOverlay) {
       const char = input?.toLowerCase();
       if (char === 'q') actions.onOpenQuote();
       if (char === 'x') actions.onExecuteTrade();
+      if (input === 'C') { actions.onPrevChain(); }       // Shift+C = prev chain
+      else if (char === 'c') { actions.onCycleChain(); }  // c = next chain
       return;
     }
 
@@ -53,7 +54,21 @@ export function useKeyboard(actions: KeyboardActions) {
       return;
     }
 
-    // Arrow keys: scroll
+    // Arrow Left/Right: cycle panes (same as Tab/Shift+Tab)
+    if (key.leftArrow) {
+      const currentIdx = PANE_ORDER.indexOf(actions.activePane);
+      const prevIdx = (currentIdx - 1 + PANE_ORDER.length) % PANE_ORDER.length;
+      actions.onSetActivePane(PANE_ORDER[prevIdx]!);
+      return;
+    }
+    if (key.rightArrow) {
+      const currentIdx = PANE_ORDER.indexOf(actions.activePane);
+      const nextIdx = (currentIdx + 1) % PANE_ORDER.length;
+      actions.onSetActivePane(PANE_ORDER[nextIdx]!);
+      return;
+    }
+
+    // Arrow Up/Down: scroll
     if (key.upArrow) { actions.onScrollUp(); return; }
     if (key.downArrow) { actions.onScrollDown(); return; }
 

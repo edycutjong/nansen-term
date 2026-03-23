@@ -52,7 +52,10 @@ export default function TokenDetail({ chain, tokenAddress }: TokenDetailProps) {
         </Box>
         <Box>
           <Text color="gray">Address:  </Text>
-          <Text color="white">{tokenAddress.length > 20 ? `${tokenAddress.slice(0, 8)}…${tokenAddress.slice(-6)}` : tokenAddress}</Text>
+          <Text color="white">{(() => {
+            const addr = String(info.address ?? info.token_address ?? tokenAddress);
+            return addr.length > 20 ? `${addr.slice(0, 8)}…${addr.slice(-6)}` : addr;
+          })()}</Text>
         </Box>
       </Box>
 

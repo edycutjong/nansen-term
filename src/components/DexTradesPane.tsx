@@ -5,7 +5,7 @@ import Table from './Table.js';
 import { useNansen } from '../hooks/useNansen.js';
 import { useStream } from '../hooks/useStream.js';
 import { formatUSD, formatTime } from '../lib/formatter.js';
-import type { Chain } from '../types/nansen.js';
+import type { Chain, PaneId } from '../types/nansen.js';
 
 interface DexTradesPaneProps {
   chain: Chain;
@@ -14,6 +14,7 @@ interface DexTradesPaneProps {
   isStreaming?: boolean;
   height?: number;
   refreshTrigger?: number;
+  onHighlight?: (token: string | null, pane: PaneId) => void;
 }
 
 const COLUMNS = [
@@ -32,7 +33,7 @@ function parseEntry(entry: Record<string, unknown>) {
   };
 }
 
-export default function DexTradesPane({ chain, isActive, selectedIndex, isStreaming = false, height, refreshTrigger = 0 }: DexTradesPaneProps) {
+export default function DexTradesPane({ chain, isActive, selectedIndex, isStreaming = false, height, refreshTrigger = 0, onHighlight }: DexTradesPaneProps) {
   const { data, loading: snapLoading, error: snapError } = useNansen(
     'research smart-money dex-trades',
     ['--chain', chain, '--limit', '10'],
@@ -54,6 +55,28 @@ export default function DexTradesPane({ chain, isActive, selectedIndex, isStream
     }
   }, [isStreaming, chain]);
 
+  // Compute rows eagerly (before any early return) so hooks stay consistent
+  let rows: ReturnType<typeof parseEntry>[] = [];
+  if (isStreaming) {
+    rows = items.map(parseEntry);
+  } else if (!snapLoading && !snapError) {
+    const entries = Array.isArray(data) ? data : (data as Record<string, unknown>)?.rows ?? (data as Record<string, unknown>)?.data ?? [];
+    rows = (entries as Record<string, unknown>[]).map(parseEntry);
+  }
+
+  // Extract buyer token from swap string for token detail
+  useEffect(() => {
+    if (isActive && onHighlight) {
+      if (selectedIndex >= 0 && selectedIndex < rows.length) {
+        const swap = rows[selectedIndex]?.swap ?? '';
+        const buyerToken = swap.split('→')[0] ?? null;
+        onHighlight(buyerToken || null, 'dex-trades');
+      } else {
+        onHighlight(null, 'dex-trades');
+      }
+    }
+  }, [isActive, selectedIndex, rows.length, onHighlight]);
+
   const modeLabel = streamActive ? '● LIVE' : '(Snapshot)';
   const title = `DEX Trades ${modeLabel}`;
 
@@ -72,14 +95,6 @@ export default function DexTradesPane({ chain, isActive, selectedIndex, isStream
         <Text color="red">{error}</Text>
       </Pane>
     );
-  }
-
-  let rows;
-  if (isStreaming) {
-    rows = items.map(parseEntry);
-  } else {
-    const entries = Array.isArray(data) ? data : (data as Record<string, unknown>)?.rows ?? (data as Record<string, unknown>)?.data ?? [];
-    rows = (entries as Record<string, unknown>[]).map(parseEntry);
   }
 
   return (

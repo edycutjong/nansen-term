@@ -12,7 +12,7 @@ export function execNansen<T = unknown>(
   if (IS_MOCK) {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const mock = getMockData(command);
+        const mock = getMockData(command, args);
         if (mock !== null) {
           resolve({ success: true, data: mock as T });
         } else {

@@ -26,7 +26,7 @@ export default function App() {
     chain: 'ethereum',
     walletName: null,
     apiCallCount: 0,
-    lastRefresh: null,
+    lastRefresh: new Date(),
     showHelp: false,
     showTokenDetail: false,
     showTradeModal: false,
@@ -87,6 +87,22 @@ export default function App() {
     }
   }, [showNotification]);
 
+  // Keep wallet list names in sync for Enter-to-select
+  useEffect(() => {
+    const doFetch = async () => {
+      try {
+        const result = await fetchWalletList();
+        const wallets = result.success
+          ? Array.isArray(result.data)
+            ? (result.data as Record<string, unknown>[])
+            : ((result.data as Record<string, unknown>)?.wallets as Record<string, unknown>[] ?? [])
+          : [];
+        walletListRef.current = wallets.map((w) => String(w.name ?? w.wallet_name ?? '?'));
+      } catch { /* ignore */ }
+    };
+    doFetch();
+  }, [refreshKey]);
+
 
   const handleRefreshCurrent = useCallback(() => {
     setRefreshKey((k) => k + 1);
@@ -115,10 +131,21 @@ export default function App() {
   }, []);
 
   const handleSelectToken = useCallback(() => {
+    // If wallet pane is active and no wallet selected, use Enter to pick highlighted wallet
+    if (state.activePane === 'wallet' && !state.walletName) {
+      const names = walletListRef.current;
+      if (names.length > 0) {
+        const idx = Math.min(scrollIndex, names.length - 1);
+        const picked = names[idx]!;
+        setState((s) => ({ ...s, walletName: picked }));
+        showNotification(`✓ Wallet: ${picked}`, 'info');
+      }
+      return;
+    }
     if (highlightedTokenRef.current) {
       setState((s) => ({ ...s, selectedToken: highlightedTokenRef.current, showTokenDetail: true }));
     }
-  }, []);
+  }, [state.activePane, state.walletName, scrollIndex, showNotification]);
 
   const handleCloseOverlay = useCallback(() => {
     setState((s) => ({
@@ -183,7 +210,7 @@ export default function App() {
   if (state.showHelp) {
     return (
       <Box flexDirection="column" height={totalRows}>
-        <Header chain={state.chain} walletName={state.walletName} />
+        <Header chain={state.chain} walletName={state.walletName} hasOverlay />
         <HelpOverlay />
       </Box>
     );
@@ -192,7 +219,7 @@ export default function App() {
   if (state.showTokenDetail && state.selectedToken) {
     return (
       <Box flexDirection="column" height={totalRows}>
-        <Header chain={state.chain} walletName={state.walletName} />
+        <Header chain={state.chain} walletName={state.walletName} hasOverlay />
         <TokenDetail chain={state.chain} tokenAddress={state.selectedToken} />
       </Box>
     );
@@ -201,7 +228,7 @@ export default function App() {
   if (state.showTradeModal) {
     return (
       <Box flexDirection="column" height={totalRows}>
-        <Header chain={state.chain} walletName={state.walletName} />
+        <Header chain={state.chain} walletName={state.walletName} hasOverlay />
         <TradeModal chain={state.chain} walletName={state.walletName} />
       </Box>
     );
@@ -211,18 +238,6 @@ export default function App() {
     <Box flexDirection="column" height={totalRows}>
       {/* Header */}
       <Header chain={state.chain} walletName={state.walletName} />
-
-      {/* Notification banner */}
-      {notification && (
-        <Box paddingX={2}>
-          <Text
-            color={notification.type === 'error' ? 'red' : notification.type === 'warn' ? 'yellow' : 'cyan'}
-            bold
-          >
-            {notification.message}
-          </Text>
-        </Box>
-      )}
 
       {/* Top row: Netflow + DEX Trades */}
       <Box flexBasis="50%" flexGrow={1}>
@@ -239,6 +254,7 @@ export default function App() {
           selectedIndex={state.activePane === 'dex-trades' ? scrollIndex : -1}
           isStreaming={state.isStreaming}
           refreshTrigger={refreshKey}
+          onHighlight={handleHighlight}
         />
       </Box>
 
@@ -255,6 +271,7 @@ export default function App() {
           walletName={state.walletName}
           isActive={state.activePane === 'wallet'}
           refreshTrigger={refreshKey}
+          selectedIndex={state.activePane === 'wallet' ? scrollIndex : -1}
         />
       </Box>
 
@@ -263,6 +280,7 @@ export default function App() {
         apiCallCount={getApiCallCount()}
         lastRefresh={state.lastRefresh}
         isStreaming={state.isStreaming}
+        notification={notification}
       />
     </Box>
   );
