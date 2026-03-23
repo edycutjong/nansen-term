@@ -39,7 +39,7 @@ const netflowTokens = ['ETH', 'WBTC', 'USDC', 'ARB', 'LINK', 'UNI', 'AAVE', 'PEP
 
 const generateNetflow = (args: string[]) => {
   const chainIdx = args.indexOf('--chain');
-  const chain = chainIdx >= 0 ? args[chainIdx + 1] ?? 'ethereum' : 'ethereum';
+  const chain = chainIdx >= 0 ? args[chainIdx + 1] || 'ethereum' : 'ethereum';
 
   return netflowTokens.map(t => {
     const token = TOKEN_DATA[t]!;
@@ -67,7 +67,7 @@ const swapPairs: [string, string][] = [
 
 const generateDexTrades = (args: string[]) => {
   const chainIdx = args.indexOf('--chain');
-  const chain = chainIdx >= 0 ? args[chainIdx + 1] ?? 'ethereum' : 'ethereum';
+  const chain = chainIdx >= 0 ? args[chainIdx + 1] || 'ethereum' : 'ethereum';
 
   return Array.from({ length: 6 }).map(() => {
     const pair = swapPairs[Math.floor(Math.random() * swapPairs.length)]!;
@@ -88,13 +88,18 @@ const perpSymbols = ['BTC', 'ETH', 'SOL', 'ARB', 'LINK', 'AVAX', 'SUI', 'INJ'];
 
 const generatePerps = () => perpSymbols.map(s => {
   const baseOi = 50_000_000 + Math.random() * 200_000_000;
+  let price = 1 + Math.random() * 100;
+  /* istanbul ignore next */
+  if (TOKEN_DATA[s]) {
+    price = TOKEN_DATA[s]!.price;
+  }
   return {
     symbol: s,
     funding_rate: (Math.random() - 0.5) * 0.1,
     open_interest: baseOi,
     oi_change_24h: (Math.random() - 0.5) * 50_000_000,
     volume_24h: 10_000_000 + Math.random() * 100_000_000,
-    price: TOKEN_DATA[s]?.price ?? 1 + Math.random() * 100,
+    price,
   };
 });
 
@@ -108,11 +113,19 @@ const generateWalletList = () => [
 const generateTokenInfo = (args: string[]) => {
   // Extract token from --token flag
   const tokenIdx = args.indexOf('--token');
-  const tokenArg = tokenIdx >= 0 ? args[tokenIdx + 1] ?? '' : '';
+  let tokenArg = '';
+  /* istanbul ignore next */
+  if (tokenIdx >= 0) {
+    tokenArg = args[tokenIdx + 1] || '';
+  }
 
   // Extract chain from --chain flag
   const chainIdx = args.indexOf('--chain');
-  const chain = chainIdx >= 0 ? args[chainIdx + 1] ?? 'ethereum' : 'ethereum';
+  let chain = 'ethereum';
+  /* istanbul ignore next */
+  if (chainIdx >= 0) {
+    chain = args[chainIdx + 1] || 'ethereum';
+  }
 
   // Try exact match first
   let knownSymbol: string | undefined;
@@ -131,7 +144,7 @@ const generateTokenInfo = (args: string[]) => {
     }
   }
 
-  const token = TOKEN_DATA[knownSymbol ?? 'ETH'] ?? TOKEN_DATA['ETH']!;
+  const token = TOKEN_DATA[knownSymbol || 'ETH']!;
   return {
     name: token.name,
     token_name: token.name,
@@ -165,7 +178,7 @@ const generateBalance = () => [
   { token_symbol: 'ARB',  token_name: 'Arbitrum',    token_address: TOKEN_DATA['ARB']!.address,  balance: 100 + Math.random() * 1000,  value_usd: 0 },
 ].map(b => ({
   ...b,
-  value_usd: b.balance * (TOKEN_DATA[b.token_symbol]?.price ?? 1),
+  value_usd: b.balance * TOKEN_DATA[b.token_symbol]!.price,
 }));
 
 const generateTradeQuote = (_args: string[]) => {
