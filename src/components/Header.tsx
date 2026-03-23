@@ -26,7 +26,7 @@ export default function Header({ chain, walletName, version = '1.0.0', mode = 'h
     case 'trade':
       shortcuts = (
         <Text color="gray">
-          ⌨ <Text color="cyan">[C] Chain</Text>  [Esc] Close
+          ⌨ [C] Chain  [Esc] Close
         </Text>
       );
       break;
@@ -36,7 +36,7 @@ export default function Header({ chain, walletName, version = '1.0.0', mode = 'h
     default:
       shortcuts = (
         <Text color="gray">
-          ⌨ <Text color="cyan">[Q] Quote  {walletName ? '[T] Trade  ' : ''}[C] Chain</Text>  [Esc] Close
+          ⌨ [C] Chain  [W] Wallet  [Q] Quote  {walletName ? '[T] Trade  ' : ''}[Esc] Close
         </Text>
       );
       break;

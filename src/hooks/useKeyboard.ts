@@ -39,6 +39,8 @@ export function useKeyboard(actions: KeyboardActions) {
       if (char === 't') actions.onExecuteTrade();
       if (input === 'C') { actions.onPrevChain(); }       // Shift+C = prev chain
       else if (char === 'c') { actions.onCycleChain(); }  // c = next chain
+      if (input === 'W') { actions.onPrevWallet(); }      // Shift+W = prev wallet
+      else if (char === 'w') { actions.onSwitchWallet(); }
       return;
     }
 

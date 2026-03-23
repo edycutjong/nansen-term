@@ -168,7 +168,16 @@ export default function App() {
   }, []);
 
   const handleToggleStreaming = useCallback(() => {
-    setState((s) => ({ ...s, isStreaming: !s.isStreaming }));
+    setState((s) => {
+      const nextStreaming = !s.isStreaming;
+      if (nextStreaming) {
+        setRefreshKeys((keys) => ({
+          ...keys,
+          'dex-trades': keys['dex-trades'] + 1,
+        }));
+      }
+      return { ...s, isStreaming: nextStreaming };
+    });
   }, []);
 
   const handleOpenQuote = useCallback(() => {
