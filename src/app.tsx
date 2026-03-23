@@ -255,13 +255,16 @@ export default function App() {
     setScrollIndex((i) => Math.max(0, i - 1));
   }, []);
 
-  // Max visible rows per pane (must match each pane's Table maxRows prop)
-  const PANE_MAX_ROWS: Record<PaneId, number> = { netflow: 8, 'dex-trades': 7, perp: 8, wallet: 10 };
+  const { stdout } = useStdout();
+  const totalRows = stdout?.rows ?? 40;
+
+  // Dynamic max visible rows per pane based on terminal height
+  // Layout: header(2) + statusBar(1) = 3; pane overhead: border(2) + title(1) + margin(1) + tableHeader(1) + separator(1) = 6
+  const paneDataRows = Math.max(3, Math.floor((totalRows - 3) / 2) - 6);
 
   const handleScrollDown = useCallback(() => {
-    const max = PANE_MAX_ROWS[state.activePane] - 1;
-    setScrollIndex((i) => Math.min(i + 1, max));
-  }, [state.activePane]);
+    setScrollIndex((i) => Math.min(i + 1, paneDataRows - 1));
+  }, [paneDataRows]);
 
   // Auto-refresh timer — only increments trigger, no full remount
   useEffect(() => {
@@ -283,8 +286,7 @@ export default function App() {
     return cleanupTerminal;
   }, []);
 
-  const { stdout } = useStdout();
-  const totalRows = stdout?.rows ?? 40;
+
 
   // Prevent list keyboard navigation when an overlay is open
   const hasOverlay = showTokenDetail || showTradeModal || showWalletModal || state.showHelp;
@@ -360,6 +362,7 @@ export default function App() {
           selectedIndex={state.activePane === 'netflow' ? scrollIndex : -1}
           refreshTrigger={refreshKeys.netflow}
           onHighlight={handleHighlight}
+          maxRows={paneDataRows}
         />
         <DexTradesPane
           chain={state.chain}
@@ -368,6 +371,7 @@ export default function App() {
           isStreaming={state.isStreaming}
           refreshTrigger={refreshKeys['dex-trades']}
           onHighlight={handleHighlight}
+          maxRows={paneDataRows}
         />
       </Box>
 
@@ -378,6 +382,7 @@ export default function App() {
           selectedIndex={state.activePane === 'perp' ? scrollIndex : -1}
           refreshTrigger={refreshKeys.perp}
           onHighlight={handleHighlight}
+          maxRows={paneDataRows}
         />
         <WalletPane
           chain={state.chain}

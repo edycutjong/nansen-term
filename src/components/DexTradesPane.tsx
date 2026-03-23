@@ -13,6 +13,7 @@ interface DexTradesPaneProps {
   selectedIndex: number;
   isStreaming?: boolean;
   height?: number;
+  maxRows?: number;
   refreshTrigger?: number;
   onHighlight?: (token: string | null, pane: PaneId) => void;
 }
@@ -33,7 +34,7 @@ function parseEntry(entry: Record<string, unknown>) {
   };
 }
 
-export default function DexTradesPane({ chain, isActive, selectedIndex, isStreaming = false, height, refreshTrigger = 0, onHighlight }: DexTradesPaneProps) {
+export default function DexTradesPane({ chain, isActive, selectedIndex, isStreaming = false, height, maxRows = 7, refreshTrigger = 0, onHighlight }: DexTradesPaneProps) {
   const { data, loading: snapLoading, error: snapError } = useNansen(
     'research smart-money dex-trades',
     ['--chain', chain, '--limit', '10'],
@@ -115,7 +116,7 @@ export default function DexTradesPane({ chain, isActive, selectedIndex, isStream
           <Text color="gray">[S] stop streaming</Text>
         </Box>
       )}
-      <Table columns={COLUMNS} data={rows} maxRows={7} selectedIndex={isActive ? clampedIndex : undefined} />
+      <Table columns={COLUMNS} data={rows} maxRows={maxRows} selectedIndex={isActive ? clampedIndex : undefined} />
     </Pane>
   );
 }
