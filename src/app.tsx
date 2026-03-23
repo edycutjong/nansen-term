@@ -107,11 +107,11 @@ export default function App() {
   }, []);
 
   const handleOpenQuote = useCallback(() => {
-    setState((s) => ({ ...s, showTradeModal: true }));
+    setState((s) => ({ ...s, showTradeModal: true, showTokenDetail: false, showHelp: false }));
   }, []);
 
   const handleExecuteTrade = useCallback(() => {
-    // TODO: execute trade flow
+    setState((s) => ({ ...s, showTradeModal: true, showTokenDetail: false, showHelp: false }));
   }, []);
 
   const handleSelectToken = useCallback(() => {

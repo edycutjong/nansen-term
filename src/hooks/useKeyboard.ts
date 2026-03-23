@@ -31,8 +31,14 @@ export function useKeyboard(actions: KeyboardActions) {
       return;
     }
 
-    // If an overlay is open, don't process other keys
-    if (actions.hasOverlay) return;
+    // If an overlay is open, don't process most other keys
+    // But DO allow jumping to the Trade Modal (Q/X) from other overlays
+    if (actions.hasOverlay) {
+      const char = input?.toLowerCase();
+      if (char === 'q') actions.onOpenQuote();
+      if (char === 'x') actions.onExecuteTrade();
+      return;
+    }
 
     // Tab / Shift+Tab: cycle panes
     if (key.tab) {
