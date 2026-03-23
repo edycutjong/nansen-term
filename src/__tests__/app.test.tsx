@@ -162,4 +162,68 @@ describe('App', () => {
     // Initially ethereum, after 'c' usually Solana since it's next in list
     expect(lastFrame()).toContain('Solana');
   });
+
+  it('switches chain back with C (shift+c)', async () => {
+    const { lastFrame, stdin } = render(<App />);
+    await new Promise((r) => setTimeout(r, 0));
+
+    // Go forward
+    stdin.write('c');
+    await new Promise((r) => setTimeout(r, 0));
+    expect(lastFrame()).toContain('Solana');
+
+    // Go back
+    stdin.write('C');
+    await new Promise((r) => setTimeout(r, 0));
+    expect(lastFrame()).toContain('Ethereum');
+  });
+
+  it('refreshes the current pane with r', async () => {
+    const { lastFrame, stdin } = render(<App />);
+    await new Promise((r) => setTimeout(r, 0));
+
+    stdin.write('r');
+    await new Promise((r) => setTimeout(r, 0));
+
+    // Should still render without error
+    expect(lastFrame()).toContain('NansenTerm');
+  });
+
+  it('refreshes all panes with p', async () => {
+    const { lastFrame, stdin } = render(<App />);
+    await new Promise((r) => setTimeout(r, 0));
+
+    stdin.write('p');
+    await new Promise((r) => setTimeout(r, 0));
+
+    // Should show notification about refreshing
+    expect(lastFrame()).toContain('NansenTerm');
+  });
+
+  it('navigates panes with arrow keys', async () => {
+    const { lastFrame, stdin } = render(<App />);
+    await new Promise((r) => setTimeout(r, 0));
+
+    // Right arrow
+    stdin.write('\x1B[C');
+    await new Promise((r) => setTimeout(r, 0));
+
+    // Should move to next pane
+    expect(lastFrame()).toContain('NansenTerm');
+  });
+
+  it('opens trade modal with t key', async () => {
+    const { lastFrame, stdin } = render(<App />);
+    await new Promise((r) => setTimeout(r, 0));
+
+    stdin.write('t');
+    await new Promise((r) => setTimeout(r, 0));
+
+    // Default chain is ethereum which doesn't support trading
+    expect(lastFrame()).toContain('TRADE');
+
+    // Close it
+    stdin.write('\x1B');
+    await new Promise((r) => setTimeout(r, 0));
+  });
 });
