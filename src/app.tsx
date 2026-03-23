@@ -183,14 +183,20 @@ export default function App() {
   }, [state.activePane, state.walletName, scrollIndex, showNotification]);
 
   const handleCloseOverlay = useCallback(() => {
-    setState((s) => ({
-      ...s,
-      showHelp: false,
-    }));
-    setShowTokenDetail(false);
-    setShowTradeModal(false);
-    setShowWalletModal(false);
-  }, []);
+    // If any overlay is open, close it first
+    if (showTokenDetail || showTradeModal || showWalletModal || state.showHelp) {
+      setState((s) => ({ ...s, showHelp: false }));
+      setShowTokenDetail(false);
+      setShowTradeModal(false);
+      setShowWalletModal(false);
+      return;
+    }
+    // No overlay open — if a wallet is selected, unselect it
+    if (state.walletName) {
+      setState((s) => ({ ...s, walletName: null }));
+      showNotification('Wallet deselected', 'info');
+    }
+  }, [showTokenDetail, showTradeModal, showWalletModal, state.showHelp, state.walletName, showNotification]);
 
   const handleSetActivePane = useCallback((pane: PaneId) => {
     setState((s) => ({ ...s, activePane: pane }));
