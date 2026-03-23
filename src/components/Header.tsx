@@ -3,15 +3,45 @@ import { Box, Text } from 'ink';
 import type { Chain } from '../types/nansen.js';
 import { CHAIN_META } from '../lib/chains.js';
 
+export type HeaderMode = 'home' | 'help' | 'token' | 'trade' | 'wallet';
+
 interface HeaderProps {
   chain: Chain;
   walletName: string | null;
   version?: string;
-  hasOverlay?: boolean;
+  mode?: HeaderMode;
 }
 
-export default function Header({ chain, walletName, version = '1.0.0', hasOverlay = false }: HeaderProps) {
+export default function Header({ chain, walletName, version = '1.0.0', mode = 'home' }: HeaderProps) {
   const meta = CHAIN_META[chain];
+
+  let shortcuts = null;
+  switch (mode) {
+    case 'home':
+      shortcuts = (
+        <Text color="gray">
+          ⌨ [Tab/←→] Switch Pane  [C] Chain  [W] Wallet  [A] Add Wallet  [Q] Quote  {walletName ? '[T] Trade  ' : ''}[R] Refresh  [?] Help  [Ctrl+C] Exit
+        </Text>
+      );
+      break;
+    case 'trade':
+      shortcuts = (
+        <Text color="gray">
+          ⌨ <Text color="cyan">[C] Chain</Text>  [Esc] Close
+        </Text>
+      );
+      break;
+    case 'help':
+    case 'token':
+    case 'wallet':
+    default:
+      shortcuts = (
+        <Text color="gray">
+          ⌨ <Text color="cyan">[Q] Quote  {walletName ? '[T] Trade  ' : ''}[C] Chain</Text>  [Esc] Close
+        </Text>
+      );
+      break;
+  }
 
   return (
     <Box flexDirection="column" paddingX={1}>
@@ -29,17 +59,7 @@ export default function Header({ chain, walletName, version = '1.0.0', hasOverla
           <Text color="yellow" bold>[{walletName || 'none'}]</Text>
         </Box>
       </Box>
-      <Box>
-        {hasOverlay ? (
-          <Text color="gray">
-            ⌨ <Text color="cyan">[Q] Quote  [X] Trade  [C] Chain</Text>  [Esc] Close
-          </Text>
-        ) : (
-          <Text color="gray">
-            ⌨ [Tab/←→] Switch Pane  [C] Chain  [W] Wallet  [Q] Quote  [R] Refresh  [?] Help  [Ctrl+C] Exit
-          </Text>
-        )}
-      </Box>
+      <Box>{shortcuts}</Box>
     </Box>
   );
 }

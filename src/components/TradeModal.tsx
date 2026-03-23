@@ -63,6 +63,9 @@ export default function TradeModal({ chain, walletName }: TradeModalProps) {
       </Box>
 
       <Text> </Text>
+      <Text color="gray">To get a quote or execute a trade, open a <Text bold color="white">separate terminal window</Text></Text>
+      <Text color="gray">and run the following Nansen CLI commands:</Text>
+      <Text> </Text>
       <Text color="cyan" bold>─── QUICK COMMANDS ───</Text>
       <Text> </Text>
 

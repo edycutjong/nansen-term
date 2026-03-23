@@ -9,6 +9,7 @@ import WalletPane from './components/WalletPane.js';
 import HelpOverlay from './components/HelpOverlay.js';
 import TokenDetail from './components/TokenDetail.js';
 import TradeModal from './components/TradeModal.js';
+import WalletModal from './components/WalletModal.js';
 import { useKeyboard } from './hooks/useKeyboard.js';
 import { nextChain, prevChain } from './lib/chains.js';
 import { fetchWalletList, getApiCallCount } from './lib/nansen.js';
@@ -28,15 +29,20 @@ export default function App() {
     apiCallCount: 0,
     lastRefresh: new Date(),
     showHelp: false,
-    showTokenDetail: false,
-    showTradeModal: false,
-    selectedToken: null,
     isStreaming: false,
   });
 
   const [scrollIndex, setScrollIndex] = useState(0);
   const [refreshKey, setRefreshKey] = useState(0);
   const [notification, setNotification] = useState<Notification | null>(null);
+  const [selectedToken, setSelectedToken] = useState<string | null>(null);
+  
+  // Overlay states
+  const [showTokenDetail, setShowTokenDetail] = useState(false);
+  const [showTradeModal, setShowTradeModal] = useState(false);
+  const [showWalletModal, setShowWalletModal] = useState(false);
+  
+  // Data streaming state
   const notifTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const walletListRef = useRef<string[]>([]);
   const walletIndexRef = useRef(0);
@@ -123,11 +129,21 @@ export default function App() {
   }, []);
 
   const handleOpenQuote = useCallback(() => {
-    setState((s) => ({ ...s, showTradeModal: true, showTokenDetail: false, showHelp: false }));
+    setState((s) => ({ ...s, showHelp: false }));
+    setShowTokenDetail(false);
+    setShowWalletModal(false);
+    setShowTradeModal(true);
   }, []);
 
   const handleExecuteTrade = useCallback(() => {
-    setState((s) => ({ ...s, showTradeModal: true, showTokenDetail: false, showHelp: false }));
+    setState((s) => ({ ...s, showHelp: false }));
+    setShowTokenDetail(false);
+    setShowWalletModal(false);
+    setShowTradeModal(true);
+  }, []);
+
+  const handleAddWallet = useCallback(() => {
+    setShowWalletModal(true);
   }, []);
 
   const handleSelectToken = useCallback(() => {
@@ -143,7 +159,8 @@ export default function App() {
       return;
     }
     if (highlightedTokenRef.current) {
-      setState((s) => ({ ...s, selectedToken: highlightedTokenRef.current, showTokenDetail: true }));
+      setSelectedToken(highlightedTokenRef.current);
+      setShowTokenDetail(true);
     }
   }, [state.activePane, state.walletName, scrollIndex, showNotification]);
 
@@ -151,9 +168,10 @@ export default function App() {
     setState((s) => ({
       ...s,
       showHelp: false,
-      showTokenDetail: false,
-      showTradeModal: false,
     }));
+    setShowTokenDetail(false);
+    setShowTradeModal(false);
+    setShowWalletModal(false);
   }, []);
 
   const handleSetActivePane = useCallback((pane: PaneId) => {
@@ -187,6 +205,9 @@ export default function App() {
   const { stdout } = useStdout();
   const totalRows = stdout?.rows ?? 40;
 
+  // Prevent list keyboard navigation when an overlay is open
+  const hasOverlay = showTokenDetail || showTradeModal || showWalletModal || state.showHelp;
+
   useKeyboard({
     onCycleChain: handleCycleChain,
     onPrevChain: handlePrevChain,
@@ -197,39 +218,49 @@ export default function App() {
     onToggleStreaming: handleToggleStreaming,
     onOpenQuote: handleOpenQuote,
     onExecuteTrade: handleExecuteTrade,
+    onAddWallet: handleAddWallet,
     onSelectToken: handleSelectToken,
     onCloseOverlay: handleCloseOverlay,
     onSetActivePane: handleSetActivePane,
     onScrollUp: handleScrollUp,
     onScrollDown: handleScrollDown,
     activePane: state.activePane,
-    hasOverlay: state.showHelp || state.showTokenDetail || state.showTradeModal,
+    hasOverlay: hasOverlay,
   });
 
   // Overlays take over the screen
   if (state.showHelp) {
     return (
       <Box flexDirection="column" height={totalRows}>
-        <Header chain={state.chain} walletName={state.walletName} hasOverlay />
+        <Header chain={state.chain} walletName={state.walletName} mode="help" />
         <HelpOverlay />
       </Box>
     );
   }
 
-  if (state.showTokenDetail && state.selectedToken) {
+  if (showTokenDetail && selectedToken) {
     return (
       <Box flexDirection="column" height={totalRows}>
-        <Header chain={state.chain} walletName={state.walletName} hasOverlay />
-        <TokenDetail chain={state.chain} tokenAddress={state.selectedToken} />
+        <Header chain={state.chain} walletName={state.walletName} mode="token" />
+        <TokenDetail chain={state.chain} tokenAddress={selectedToken} />
       </Box>
     );
   }
 
-  if (state.showTradeModal) {
+  if (showTradeModal) {
     return (
       <Box flexDirection="column" height={totalRows}>
-        <Header chain={state.chain} walletName={state.walletName} hasOverlay />
+        <Header chain={state.chain} walletName={state.walletName} mode="trade" />
         <TradeModal chain={state.chain} walletName={state.walletName} />
+      </Box>
+    );
+  }
+
+  if (showWalletModal) {
+    return (
+      <Box flexDirection="column" height={totalRows}>
+        <Header chain={state.chain} walletName={state.walletName} mode="wallet" />
+        <WalletModal />
       </Box>
     );
   }

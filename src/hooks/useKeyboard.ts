@@ -14,6 +14,7 @@ interface KeyboardActions {
   onToggleStreaming: () => void;
   onOpenQuote: () => void;
   onExecuteTrade: () => void;
+  onAddWallet: () => void;
   onSelectToken: () => void;
   onCloseOverlay: () => void;
   onSetActivePane: (pane: PaneId) => void;
@@ -35,7 +36,7 @@ export function useKeyboard(actions: KeyboardActions) {
     if (actions.hasOverlay) {
       const char = input?.toLowerCase();
       if (char === 'q') actions.onOpenQuote();
-      if (char === 'x') actions.onExecuteTrade();
+      if (char === 't') actions.onExecuteTrade();
       if (input === 'C') { actions.onPrevChain(); }       // Shift+C = prev chain
       else if (char === 'c') { actions.onCycleChain(); }  // c = next chain
       return;
@@ -80,11 +81,12 @@ export function useKeyboard(actions: KeyboardActions) {
     switch (input.toLowerCase()) {
       case 'c': actions.onCycleChain(); break;
       case 'w': actions.onSwitchWallet(); break;
+      case 'a': actions.onAddWallet(); break;
       case 'r': actions.onRefreshCurrent(); break;
-      case 'a': actions.onRefreshAll(); break;
+      case 'r': actions.onRefreshCurrent(); break;
       case 's': actions.onToggleStreaming(); break;
       case 'q': actions.onOpenQuote(); break;
-      case 'x': actions.onExecuteTrade(); break;
+      case 't': actions.onExecuteTrade(); break;
       case '?': actions.onToggleHelp(); break;
     }
   });
