@@ -264,8 +264,8 @@ export default function App() {
   const paneDataRows = Math.max(3, Math.floor((totalRows - 3) / 2) - 8);
 
   const handleScrollDown = useCallback(() => {
-    setScrollIndex((i) => Math.min(i + 1, paneDataRows - 1));
-  }, [paneDataRows]);
+    setScrollIndex((i) => Math.min(i + 1, 49));
+  }, []);
 
   // Auto-refresh timer — only increments trigger, no full remount
   useEffect(() => {
