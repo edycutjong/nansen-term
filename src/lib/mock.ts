@@ -29,6 +29,9 @@ const generatePerps = () => perpSymbols.map(s => ({
 
 const generateWalletList = () => [
   { name: 'demo-wallet', evm_address: '0xDEAD...BEEF', solana_address: '—' },
+  { name: 'whale-tracker', evm_address: '0x1234...ABCD', solana_address: '—' },
+  { name: 'sol-degen', evm_address: '—', solana_address: '7y3g...9vBz' },
+  { name: 'main-vault', evm_address: '0x0000...0000', solana_address: '1111...1111' },
 ];
 
 /**
