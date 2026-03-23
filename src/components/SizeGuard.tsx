@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Text, useStdout } from 'ink';
 
 const MIN_WIDTH = 120;
-const MIN_HEIGHT = 30;
+const MIN_HEIGHT = 24;
 
 interface SizeGuardProps {
   children: React.ReactNode;

@@ -6,6 +6,7 @@ const PANE_ORDER: PaneId[] = ['netflow', 'dex-trades', 'perp', 'wallet'];
 
 interface KeyboardActions {
   onCycleChain: () => void;
+  onPrevChain: () => void;
   onSwitchWallet: () => void;
   onRefreshCurrent: () => void;
   onRefreshAll: () => void;
@@ -53,7 +54,8 @@ export function useKeyboard(actions: KeyboardActions) {
     // Enter: select token
     if (key.return) { actions.onSelectToken(); return; }
 
-    // Hotkeys (lowercase)
+    // Hotkeys (c/C for chain direction)
+    if (input === 'C') { actions.onPrevChain(); return; }  // Shift+C = prev
     switch (input.toLowerCase()) {
       case 'c': actions.onCycleChain(); break;
       case 'w': actions.onSwitchWallet(); break;

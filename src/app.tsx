@@ -10,7 +10,7 @@ import HelpOverlay from './components/HelpOverlay.js';
 import TokenDetail from './components/TokenDetail.js';
 import TradeModal from './components/TradeModal.js';
 import { useKeyboard } from './hooks/useKeyboard.js';
-import { nextChain } from './lib/chains.js';
+import { nextChain, prevChain } from './lib/chains.js';
 import { fetchWalletList, getApiCallCount } from './lib/nansen.js';
 import type { PaneId, Chain, AppState } from './types/nansen.js';
 
@@ -49,6 +49,10 @@ export default function App() {
 
   const handleCycleChain = useCallback(() => {
     setState((s) => ({ ...s, chain: nextChain(s.chain) }));
+  }, []);
+
+  const handlePrevChain = useCallback(() => {
+    setState((s) => ({ ...s, chain: prevChain(s.chain) }));
   }, []);
 
   const handleSwitchWallet = useCallback(async () => {
@@ -140,6 +144,7 @@ export default function App() {
 
   useKeyboard({
     onCycleChain: handleCycleChain,
+    onPrevChain: handlePrevChain,
     onSwitchWallet: handleSwitchWallet,
     onRefreshCurrent: handleRefreshCurrent,
     onRefreshAll: handleRefreshAll,
