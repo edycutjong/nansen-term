@@ -9,6 +9,7 @@ export function execNansen<T = unknown>(
   command: string,
   args: string[] = [],
 ): Promise<NansenResponse<T>> {
+  incrementApiCallCount();
   if (IS_MOCK) {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -82,7 +83,6 @@ export function resetApiCallCount(): void {
  * Convenience wrappers for common Nansen CLI commands.
  */
 export async function fetchNetflow(chain: string, limit = 10) {
-  incrementApiCallCount();
   return execNansen('research smart-money netflow', [
     '--chain', chain,
     '--limit', String(limit),
@@ -90,7 +90,6 @@ export async function fetchNetflow(chain: string, limit = 10) {
 }
 
 export async function fetchDexTrades(chain: string, limit = 10) {
-  incrementApiCallCount();
   return execNansen('research smart-money dex-trades', [
     '--chain', chain,
     '--limit', String(limit),
@@ -98,24 +97,20 @@ export async function fetchDexTrades(chain: string, limit = 10) {
 }
 
 export async function fetchPerpScreener(limit = 10) {
-  incrementApiCallCount();
   return execNansen('research perp screener', [
     '--limit', String(limit),
   ]);
 }
 
 export async function fetchWalletList() {
-  incrementApiCallCount();
   return execNansen('wallet list');
 }
 
 export async function fetchWalletShow(name: string) {
-  incrementApiCallCount();
   return execNansen('wallet show', ['--name', name]);
 }
 
 export async function fetchBalance(address: string, chain: string) {
-  incrementApiCallCount();
   return execNansen('research profiler balance', [
     '--address', address,
     '--chain', chain,
@@ -123,7 +118,6 @@ export async function fetchBalance(address: string, chain: string) {
 }
 
 export async function fetchTokenInfo(chain: string, token: string) {
-  incrementApiCallCount();
   return execNansen('research token info', [
     '--chain', chain,
     '--token', token,
@@ -131,7 +125,6 @@ export async function fetchTokenInfo(chain: string, token: string) {
 }
 
 export async function fetchTokenIndicators(chain: string, token: string) {
-  incrementApiCallCount();
   return execNansen('research token indicators', [
     '--chain', chain,
     '--token', token,
@@ -139,7 +132,6 @@ export async function fetchTokenIndicators(chain: string, token: string) {
 }
 
 export async function fetchTokenOHLCV(chain: string, token: string) {
-  incrementApiCallCount();
   return execNansen('research token ohlcv', [
     '--chain', chain,
     '--token', token,
@@ -154,7 +146,6 @@ export async function fetchTradeQuote(
   amount: string,
   wallet?: string,
 ) {
-  incrementApiCallCount();
   const args = ['--chain', chain, '--from', from, '--to', to, '--amount', amount];
   if (wallet) args.push('--wallet', wallet);
   return execNansen('trade quote', args);
@@ -164,24 +155,20 @@ export async function fetchTradeExecute(
   chain: string,
   wallet?: string,
 ) {
-  incrementApiCallCount();
   const args = ['--chain', chain];
   if (wallet) args.push('--wallet', wallet);
   return execNansen('trade execute', args);
 }
 
 export async function fetchSearch(query: string) {
-  incrementApiCallCount();
   return execNansen('research search', ['--query', query]);
 }
 
 export async function fetchAccountStatus() {
-  incrementApiCallCount();
   return execNansen('account');
 }
 
 export async function fetchSmartMoneyHoldings(chain: string, limit = 10) {
-  incrementApiCallCount();
   return execNansen('research smart-money holdings', [
     '--chain', chain,
     '--limit', String(limit),
@@ -189,14 +176,12 @@ export async function fetchSmartMoneyHoldings(chain: string, limit = 10) {
 }
 
 export async function fetchPerpLeaderboard(limit = 10) {
-  incrementApiCallCount();
   return execNansen('research perp leaderboard', [
     '--limit', String(limit),
   ]);
 }
 
 export async function fetchPnlSummary(address: string, chain: string) {
-  incrementApiCallCount();
   return execNansen('research profiler pnl-summary', [
     '--address', address,
     '--chain', chain,
@@ -204,7 +189,6 @@ export async function fetchPnlSummary(address: string, chain: string) {
 }
 
 export async function fetchFlowIntelligence(chain: string, token: string) {
-  incrementApiCallCount();
   return execNansen('research token flow-intelligence', [
     '--chain', chain,
     '--token', token,
