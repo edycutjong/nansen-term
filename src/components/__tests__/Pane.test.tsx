@@ -36,6 +36,6 @@ describe('Pane', () => {
 
     const frame = lastFrame();
     expect(frame).toContain('ACTIVE PANE');
-    expect(frame).toContain('◀');
+    expect(frame).toContain('▸');
   });
 });

@@ -364,6 +364,7 @@ export default function App() {
           refreshTrigger={refreshKeys.netflow}
           onHighlight={handleHighlight}
           maxRows={paneDataRows}
+          paneNumber={1}
         />
         <DexTradesPane
           chain={state.chain}
@@ -373,6 +374,7 @@ export default function App() {
           refreshTrigger={refreshKeys['dex-trades']}
           onHighlight={handleHighlight}
           maxRows={paneDataRows}
+          paneNumber={2}
         />
       </Box>
 
@@ -384,6 +386,7 @@ export default function App() {
           refreshTrigger={refreshKeys.perp}
           onHighlight={handleHighlight}
           maxRows={paneDataRows}
+          paneNumber={3}
         />
         <WalletPane
           chain={state.chain}
@@ -391,6 +394,7 @@ export default function App() {
           isActive={state.activePane === 'wallet'}
           refreshTrigger={refreshKeys.wallet}
           selectedIndex={state.activePane === 'wallet' ? scrollIndex : -1}
+          paneNumber={4}
         />
       </Box>
 

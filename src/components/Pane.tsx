@@ -5,14 +5,16 @@ interface PaneProps {
   title: string;
   emoji?: string;
   isActive?: boolean;
+  paneNumber?: number;
   width?: string | number;
   height?: string | number;
   children: React.ReactNode;
 }
 
-export default function Pane({ title, emoji, isActive = false, width, height, children }: PaneProps) {
+export default function Pane({ title, emoji, isActive = false, paneNumber, width, height, children }: PaneProps) {
   const borderColor = isActive ? 'cyan' : 'gray';
   const titleColor = isActive ? 'cyan' : 'white';
+  const prefix = isActive ? '▸' : paneNumber !== undefined ? String(paneNumber) : '';
 
   return (
     <Box
@@ -25,10 +27,10 @@ export default function Pane({ title, emoji, isActive = false, width, height, ch
       paddingX={1}
     >
       <Box>
+        <Text color={isActive ? 'cyan' : 'gray'} bold>{prefix} </Text>
         <Text color={titleColor} bold>
           {emoji ? `${emoji} ` : ''}{title.toUpperCase()}
         </Text>
-        {isActive && <Text color="cyan"> ◀</Text>}
       </Box>
       <Box flexDirection="column" flexGrow={1} marginTop={1}>
         {children}
@@ -36,3 +38,4 @@ export default function Pane({ title, emoji, isActive = false, width, height, ch
     </Box>
   );
 }
+

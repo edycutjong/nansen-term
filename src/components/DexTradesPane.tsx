@@ -14,6 +14,7 @@ interface DexTradesPaneProps {
   isStreaming?: boolean;
   height?: number;
   maxRows?: number;
+  paneNumber?: number;
   refreshTrigger?: number;
   onHighlight?: (token: string | null, pane: PaneId) => void;
 }
@@ -34,7 +35,7 @@ function parseEntry(entry: Record<string, unknown>) {
   };
 }
 
-export default function DexTradesPane({ chain, isActive, selectedIndex, isStreaming = false, height, maxRows = 7, refreshTrigger = 0, onHighlight }: DexTradesPaneProps) {
+export default function DexTradesPane({ chain, isActive, selectedIndex, isStreaming = false, height, maxRows = 7, paneNumber, refreshTrigger = 0, onHighlight }: DexTradesPaneProps) {
   const { data, loading: snapLoading, error: snapError } = useNansen(
     'research smart-money dex-trades',
     ['--chain', chain, '--limit', '10'],
@@ -93,7 +94,7 @@ export default function DexTradesPane({ chain, isActive, selectedIndex, isStream
 
   if (!isStreaming && snapLoading) {
     return (
-      <Pane title={title} emoji="🔄" isActive={isActive} width="50%" height={height}>
+    <Pane title={title} emoji="🔄" isActive={isActive} paneNumber={paneNumber} width="50%" height={height}>
         <Text color="yellow">Loading...</Text>
       </Pane>
     );
@@ -102,14 +103,14 @@ export default function DexTradesPane({ chain, isActive, selectedIndex, isStream
   const error = snapError ?? streamError;
   if (error) {
     return (
-      <Pane title={title} emoji="🔄" isActive={isActive} width="50%" height={height}>
+    <Pane title={title} emoji="🔄" isActive={isActive} paneNumber={paneNumber} width="50%" height={height}>
         <Text color="red">{error}</Text>
       </Pane>
     );
   }
 
   return (
-    <Pane title={title} emoji="🔄" isActive={isActive} width="50%" height={height}>
+    <Pane title={title} emoji="🔄" isActive={isActive} paneNumber={paneNumber} width="50%" height={height}>
       {isStreaming && (
         <Box marginBottom={1}>
           <Text color="magenta">● {rows.length} trades  </Text>

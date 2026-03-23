@@ -11,6 +11,7 @@ interface PerpPaneProps {
   selectedIndex: number;
   height?: number;
   maxRows?: number;
+  paneNumber?: number;
   refreshTrigger?: number;
   onHighlight?: (token: string | null, pane: PaneId) => void;
 }
@@ -21,7 +22,7 @@ const COLUMNS = [
   { header: 'OI Change', key: 'oiChange', width: 12, align: 'right' as const },
 ];
 
-export default function PerpPane({ isActive, selectedIndex, height, maxRows = 8, refreshTrigger = 0, onHighlight }: PerpPaneProps) {
+export default function PerpPane({ isActive, selectedIndex, height, maxRows = 8, paneNumber, refreshTrigger = 0, onHighlight }: PerpPaneProps) {
   const { data, loading, error } = useNansen(
     'research perp screener',
     ['--limit', '10'],
@@ -48,7 +49,7 @@ export default function PerpPane({ isActive, selectedIndex, height, maxRows = 8,
   }, [isActive, clampedIndex, rows, onHighlight]);
   if (loading) {
     return (
-      <Pane title="Perp Screener" emoji="📈" isActive={isActive} width="50%" height={height}>
+      <Pane title="Perp Screener" emoji="📈" isActive={isActive} paneNumber={paneNumber} width="50%" height={height}>
         <Text color="yellow">Loading...</Text>
       </Pane>
     );
@@ -56,7 +57,7 @@ export default function PerpPane({ isActive, selectedIndex, height, maxRows = 8,
 
   if (error) {
     return (
-      <Pane title="Perp Screener" emoji="📈" isActive={isActive} width="50%" height={height}>
+      <Pane title="Perp Screener" emoji="📈" isActive={isActive} paneNumber={paneNumber} width="50%" height={height}>
         <Text color="red">{error}</Text>
       </Pane>
     );

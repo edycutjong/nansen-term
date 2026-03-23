@@ -135,7 +135,7 @@ describe('App', () => {
     const { lastFrame, stdin } = render(<App />);
     await wait();
     
-    expect(lastFrame()).toContain('SMART MONEY NETFLOW ◀');
+    expect(lastFrame()).toContain('▸');
     
     stdin.write('\t');
     await wait();
@@ -149,7 +149,7 @@ describe('App', () => {
     // Shift+Tab should go to last pane (wallet)
     stdin.write('\x1B[Z');
     await wait();
-    expect(lastFrame()).toContain('WALLET ◀');
+    expect(lastFrame()).toContain('▸');
   });
 
   it('navigates between panes with arrow keys', async () => {

@@ -78,6 +78,15 @@ export function useKeyboard(actions: KeyboardActions) {
     // Enter: select token
     if (key.return) { actions.onSelectToken(); return; }
 
+    // Number keys: jump to specific pane
+    if (input >= '1' && input <= '4') {
+      const paneIdx = parseInt(input, 10) - 1;
+      if (PANE_ORDER[paneIdx]) {
+        actions.onSetActivePane(PANE_ORDER[paneIdx]!);
+      }
+      return;
+    }
+
     // Hotkeys (c/C for chain direction)
     if (input === 'C') { actions.onPrevChain(); return; }  // Shift+C = prev
     if (input === 'W') { actions.onPrevWallet(); return; }  // Shift+W = prev wallet

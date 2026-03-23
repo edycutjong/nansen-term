@@ -9,6 +9,7 @@ interface WalletPaneProps {
   walletName: string | null;
   isActive: boolean;
   height?: number;
+  paneNumber?: number;
   refreshTrigger?: number;
   selectedIndex?: number;
   onSelectWallet?: (name: string) => void;
@@ -19,6 +20,7 @@ export default function WalletPane({
   walletName,
   isActive,
   height,
+  paneNumber,
   refreshTrigger = 0,
   selectedIndex = -1,
 }: WalletPaneProps) {
@@ -59,7 +61,7 @@ export default function WalletPane({
 
   if (listLoading || walletLoading) {
     return (
-      <Pane title="Wallet" emoji="🏦" isActive={isActive} width="50%" height={height}>
+    <Pane title="Wallet" emoji="🏦" isActive={isActive} paneNumber={paneNumber} width="50%" height={height}>
         <Text color="yellow">Loading...</Text>
       </Pane>
     );
@@ -70,7 +72,7 @@ export default function WalletPane({
     const clampedIdx = walletCount > 0 ? Math.min(selectedIndex, walletCount - 1) : -1;
 
     return (
-      <Pane title="Wallet" emoji="🏦" isActive={isActive} width="50%" height={height}>
+    <Pane title="Wallet" emoji="🏦" isActive={isActive} paneNumber={paneNumber} width="50%" height={height}>
         {walletCount === 0 ? (
           <Box flexDirection="column" alignItems="center" paddingTop={2}>
             <Text color="gray">No wallets found.</Text>
@@ -109,7 +111,7 @@ export default function WalletPane({
     : [];
 
   return (
-    <Pane title="Wallet" emoji="🏦" isActive={isActive} width="50%" height={height}>
+    <Pane title="Wallet" emoji="🏦" isActive={isActive} paneNumber={paneNumber} width="50%" height={height}>
       <Box flexDirection="column">
         <Box>
           <Text color="gray">Name: </Text>
