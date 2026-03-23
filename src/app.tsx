@@ -194,7 +194,7 @@ export default function App() {
     // No overlay open — if a wallet is selected, unselect it
     if (state.walletName) {
       setState((s) => ({ ...s, walletName: null }));
-      showNotification('Wallet deselected', 'info');
+      showNotification('Wallet unselected', 'info');
     }
   }, [showTokenDetail, showTradeModal, showWalletModal, state.showHelp, state.walletName, showNotification]);
 

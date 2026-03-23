@@ -149,7 +149,7 @@ export default function WalletPane({
 
         {walletError && <Text color="red">{walletError}</Text>}
         <Box marginTop={1}>
-          <Text color="gray" dimColor>[Esc] Deselect  [W] Switch  [A] Add</Text>
+          <Text color="gray" dimColor>[Esc] Back  [W] Switch  [A] Add</Text>
         </Box>
       </Box>
     </Pane>
