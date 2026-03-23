@@ -64,7 +64,7 @@ export default function PerpPane({ isActive, selectedIndex, height, maxRows = 8,
   }
 
   return (
-    <Pane title="Perp Screener" emoji="📈" isActive={isActive} width="50%" height={height}>
+    <Pane title="Perp Screener" emoji="📈" isActive={isActive} paneNumber={paneNumber} width="50%" height={height}>
       <Table columns={COLUMNS} data={rows} maxRows={maxRows} selectedIndex={isActive ? clampedIndex : undefined} />
     </Pane>
   );

@@ -67,7 +67,7 @@ export default function NetflowPane({ chain, isActive, selectedIndex, height, ma
   }
 
   return (
-    <Pane title="Smart Money Netflow" emoji="📊" isActive={isActive} width="50%" height={height}>
+    <Pane title="Smart Money Netflow" emoji="📊" isActive={isActive} paneNumber={paneNumber} width="50%" height={height}>
       <Table columns={COLUMNS} data={rows} maxRows={maxRows} selectedIndex={isActive ? clampedIndex : undefined} />
     </Pane>
   );
