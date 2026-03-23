@@ -49,4 +49,4 @@ export function getMockData(command: string): unknown | null {
   return null;
 }
 
-export const IS_MOCK = process.env['NANSEN_MOCK'] === '1';
+export const IS_MOCK = process.env['NANSEN_MOCK'] === 'true';
