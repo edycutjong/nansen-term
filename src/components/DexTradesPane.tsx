@@ -37,7 +37,7 @@ export default function DexTradesPane({ chain, isActive, selectedIndex, isStream
   const { data, loading: snapLoading, error: snapError } = useNansen(
     'research smart-money dex-trades',
     ['--chain', chain, '--limit', '10'],
-    !isStreaming,
+    true,
     refreshTrigger,
   );
 
@@ -55,13 +55,21 @@ export default function DexTradesPane({ chain, isActive, selectedIndex, isStream
     }
   }, [isStreaming, chain]);
 
-  // Compute rows eagerly (before any early return) so hooks stay consistent
+  // Parse snapshot rows
+  const snapRows: ReturnType<typeof parseEntry>[] = (() => {
+    if (snapLoading || snapError) return [];
+    const entries = Array.isArray(data) ? data : (data as Record<string, unknown>)?.rows ?? (data as Record<string, unknown>)?.data ?? [];
+    return (entries as Record<string, unknown>[]).map(parseEntry);
+  })();
+
+  // Compute final rows: streaming items on top, then snapshot as seed
   let rows: ReturnType<typeof parseEntry>[] = [];
   if (isStreaming) {
-    rows = items.map(parseEntry);
-  } else if (!snapLoading && !snapError) {
-    const entries = Array.isArray(data) ? data : (data as Record<string, unknown>)?.rows ?? (data as Record<string, unknown>)?.data ?? [];
-    rows = (entries as Record<string, unknown>[]).map(parseEntry);
+    const streamRows = items.map(parseEntry);
+    // Show stream items first, then snapshot fills the gap
+    rows = [...streamRows, ...snapRows].slice(0, 20);
+  } else {
+    rows = snapRows;
   }
 
   // Extract buyer token from swap string for token detail
