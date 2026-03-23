@@ -108,8 +108,5 @@ export interface AppState {
   apiCallCount: number;
   lastRefresh: Date | null;
   showHelp: boolean;
-  showTokenDetail: boolean;
-  showTradeModal: boolean;
-  selectedToken: string | null;
   isStreaming: boolean;
 }
