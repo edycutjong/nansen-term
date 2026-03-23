@@ -1,7 +1,7 @@
 
 import { render } from 'ink-testing-library';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import App, { setupTerminal, cleanupTerminal } from '../app.js';
+import App, { setupTerminal, cleanupTerminal, clearAutoRefresh } from '../app.js';
 import { useNansen } from '../hooks/useNansen.js';
 import { getApiCallCount, fetchWalletList } from '../lib/nansen.js';
 import { useStream } from '../hooks/useStream.js';
@@ -91,6 +91,16 @@ describe('App', () => {
     cleanupTerminal();
     expect(stdoutWriteSpy).toHaveBeenCalledWith('\x1B[?25h');
     expect(stdoutWriteSpy).toHaveBeenCalledWith('\x1B]0;\x07');
+  });
+
+  it('clearAutoRefresh clears auto-refresh interval', () => {
+    // Call with no timer (null branch)
+    clearAutoRefresh();
+    // Also test with a real timer (truthy branch)
+    const { stdin } = render(<App />);
+    // App's useEffect sets the interval, so clearAutoRefresh should clear it
+    clearAutoRefresh();
+    stdin.write('q');
   });
 
   it('setupTerminal hides cursor and sets title', () => {

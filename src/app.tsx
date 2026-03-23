@@ -27,6 +27,13 @@ export function cleanupTerminal(): void {
   process.stdout.write('\x1B]0;\x07');
 }
 
+const autoRefreshTimerRef: { current: ReturnType<typeof setInterval> | null } = { current: null };
+
+/** Clear the auto-refresh interval */
+export function clearAutoRefresh(): void {
+  clearInterval(autoRefreshTimerRef.current as unknown as number);
+}
+
 type NotificationType = 'info' | 'warn' | 'error';
 interface Notification {
   message: string;
@@ -260,7 +267,7 @@ export default function App() {
 
   // Auto-refresh timer — only increments trigger, no full remount
   useEffect(() => {
-    const timer = setInterval(() => {
+    autoRefreshTimerRef.current = setInterval(() => {
       setRefreshKeys((keys) => ({
         netflow: keys.netflow + 1,
         'dex-trades': keys['dex-trades'] + 1,
@@ -269,7 +276,7 @@ export default function App() {
       }));
       setState((s) => ({ ...s, lastRefresh: new Date(), apiCallCount: getApiCallCount() }));
     }, 5 * 60_000); // 5 min — conserve API credits
-    return () => clearInterval(timer);
+    return clearAutoRefresh;
   }, []);
 
   // Hide terminal cursor and set window title
