@@ -16,6 +16,7 @@ import {
   fetchTokenIndicators,
   fetchTokenOHLCV,
   fetchTradeQuote,
+  fetchTradeExecute,
   fetchSearch,
   fetchAccountStatus,
   fetchSmartMoneyHoldings,
@@ -161,13 +162,15 @@ describe('nansen', () => {
       const p15 = fetchPerpLeaderboard();
       const p16 = fetchPnlSummary('0xabc', 'ethereum');
       const p17 = fetchFlowIntelligence('ethereum', 'ETH');
+      const p18 = fetchTradeExecute('solana');
+      const p19 = fetchTradeExecute('base', 'demo-wallet');
 
       vi.runAllTimers();
 
-      await Promise.all([p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17]);
+      await Promise.all([p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19]);
 
-      // 17 calls made (2 for fetchTradeQuote)
-      expect(getApiCallCount()).toBe(17);
+      // 19 calls made (2 for fetchTradeQuote, 2 for fetchTradeExecute)
+      expect(getApiCallCount()).toBe(19);
     });
   });
 

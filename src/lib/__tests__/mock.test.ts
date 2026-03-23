@@ -127,6 +127,12 @@ describe('mock', () => {
     expect(data.price_impact).toBe('0.1%');
   });
 
+  it('generates trade execute', () => {
+    const data = getMockData('trade execute') as any;
+    expect(data.tx_hash).toBeDefined();
+    expect(data.status).toBe('confirmed');
+  });
+
   it('returns null for unknown command', () => {
     expect(getMockData('unknown command')).toBeNull();
   });
