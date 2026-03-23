@@ -7,6 +7,8 @@ import DexTradesPane from './components/DexTradesPane.js';
 import PerpPane from './components/PerpPane.js';
 import WalletPane from './components/WalletPane.js';
 import HelpOverlay from './components/HelpOverlay.js';
+import TokenDetail from './components/TokenDetail.js';
+import TradeModal from './components/TradeModal.js';
 import { useKeyboard } from './hooks/useKeyboard.js';
 import { nextChain } from './lib/chains.js';
 import { getApiCallCount } from './lib/nansen.js';
@@ -107,12 +109,30 @@ export default function App() {
     hasOverlay: state.showHelp || state.showTokenDetail || state.showTradeModal,
   });
 
-  // Help overlay takes over the screen
+  // Overlays take over the screen
   if (state.showHelp) {
     return (
       <Box flexDirection="column">
         <Header chain={state.chain} walletName={state.walletName} />
         <HelpOverlay />
+      </Box>
+    );
+  }
+
+  if (state.showTokenDetail && state.selectedToken) {
+    return (
+      <Box flexDirection="column">
+        <Header chain={state.chain} walletName={state.walletName} />
+        <TokenDetail chain={state.chain} tokenAddress={state.selectedToken} />
+      </Box>
+    );
+  }
+
+  if (state.showTradeModal) {
+    return (
+      <Box flexDirection="column">
+        <Header chain={state.chain} walletName={state.walletName} />
+        <TradeModal chain={state.chain} walletName={state.walletName} />
       </Box>
     );
   }
