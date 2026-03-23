@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { Box } from 'ink';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { Box, Text } from 'ink';
 import Header from './components/Header.js';
 import StatusBar from './components/StatusBar.js';
 import NetflowPane from './components/NetflowPane.js';
@@ -11,8 +11,14 @@ import TokenDetail from './components/TokenDetail.js';
 import TradeModal from './components/TradeModal.js';
 import { useKeyboard } from './hooks/useKeyboard.js';
 import { nextChain } from './lib/chains.js';
-import { getApiCallCount } from './lib/nansen.js';
+import { fetchWalletList, getApiCallCount } from './lib/nansen.js';
 import type { PaneId, Chain, AppState } from './types/nansen.js';
+
+type NotificationType = 'info' | 'warn' | 'error';
+interface Notification {
+  message: string;
+  type: NotificationType;
+}
 
 export default function App() {
   const [state, setState] = useState<AppState>({
@@ -30,14 +36,46 @@ export default function App() {
 
   const [scrollIndex, setScrollIndex] = useState(0);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [notification, setNotification] = useState<Notification | null>(null);
+  const notifTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const walletListRef = useRef<string[]>([]);
+  const walletIndexRef = useRef(0);
+
+  const showNotification = useCallback((message: string, type: NotificationType = 'info') => {
+    setNotification({ message, type });
+    if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
+    notifTimerRef.current = setTimeout(() => setNotification(null), 3000);
+  }, []);
 
   const handleCycleChain = useCallback(() => {
     setState((s) => ({ ...s, chain: nextChain(s.chain) }));
   }, []);
 
-  const handleSwitchWallet = useCallback(() => {
-    // TODO: wallet picker overlay
-  }, []);
+  const handleSwitchWallet = useCallback(async () => {
+    try {
+      const result = await fetchWalletList();
+      const wallets = result.success
+        ? Array.isArray(result.data)
+          ? (result.data as Record<string, unknown>[])
+          : ((result.data as Record<string, unknown>)?.wallets as Record<string, unknown>[] ?? [])
+        : [];
+
+      if (wallets.length === 0) {
+        showNotification('⚠ No wallets found. Run: nansen wallet create', 'warn');
+        return;
+      }
+
+      const names = wallets.map((w) => String(w.name ?? w.wallet_name ?? '?'));
+      walletListRef.current = names;
+      walletIndexRef.current = (walletIndexRef.current + 1) % names.length;
+      const next = names[walletIndexRef.current]!;
+      setState((s) => ({ ...s, walletName: next }));
+      showNotification(`✓ Wallet: ${next}`, 'info');
+    } catch {
+      showNotification('✗ Failed to fetch wallets', 'error');
+    }
+  }, [showNotification]);
+
 
   const handleRefreshCurrent = useCallback(() => {
     setRefreshKey((k) => k + 1);
@@ -150,6 +188,18 @@ export default function App() {
     <Box flexDirection="column" key={refreshKey}>
       {/* Header */}
       <Header chain={state.chain} walletName={state.walletName} />
+
+      {/* Notification banner */}
+      {notification && (
+        <Box paddingX={2}>
+          <Text
+            color={notification.type === 'error' ? 'red' : notification.type === 'warn' ? 'yellow' : 'cyan'}
+            bold
+          >
+            {notification.message}
+          </Text>
+        </Box>
+      )}
 
       {/* Top row: Netflow + DEX Trades */}
       <Box>
