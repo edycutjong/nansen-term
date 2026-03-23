@@ -9,17 +9,21 @@ const generateNetflow = () => netflowTokens.map(t => ({
   net_flow_7d_usd: (Math.random() - 0.5) * 30_000_000
 }));
 
-const swapPairs = ['ETH → USDC', 'WBTC → ETH', 'USDC → ARB', 'PEPE → ETH', 'LINK → USDC', 'UNI → WBTC', 'SOL → USDC'];
-const generateDexTrades = () => Array.from({ length: 6 }).map((_, i) => ({
-  timestamp: Date.now() - (Math.random() * 100_000),
-  swap: swapPairs[Math.floor(Math.random() * swapPairs.length)],
-  value_usd: Math.random() * 100_000
-})).sort((a, b) => b.timestamp - a.timestamp);
+const swapPairs = [['ETH', 'USDC'], ['WBTC', 'ETH'], ['USDC', 'ARB'], ['PEPE', 'ETH'], ['LINK', 'USDC'], ['UNI', 'WBTC'], ['SOL', 'USDC']];
+const generateDexTrades = () => Array.from({ length: 6 }).map((_, i) => {
+  const pair = swapPairs[Math.floor(Math.random() * swapPairs.length)];
+  return {
+    timestamp: new Date(Date.now() - (Math.random() * 100_000)).toISOString(),
+    buyer_token_symbol: pair[0],
+    seller_token_symbol: pair[1],
+    value_usd: Math.random() * 100_000
+  };
+}).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
 const perpSymbols = ['BTC', 'ETH', 'SOL', 'ARB', 'LINK', 'AVAX', 'SUI', 'INJ'];
 const generatePerps = () => perpSymbols.map(s => ({
   symbol: s,
-  funding_rate: (Math.random() - 0.5) * 0.001,
+  funding_rate: (Math.random() - 0.5) * 0.1,
   oi_change_24h: (Math.random() - 0.5) * 50_000_000
 }));
 
