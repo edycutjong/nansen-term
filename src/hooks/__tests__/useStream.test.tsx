@@ -121,6 +121,17 @@ describe('useStream', () => {
     expect(result.current?.error).toBeNull();
   });
 
+  it('skips empty and whitespace-only lines in buffer', async () => {
+    const { result } = renderHook(() => useStream('cmd'));
+    result.current?.start();
+
+    // Emit data with empty lines and whitespace-only lines
+    mockStdout.emit('data', Buffer.from('\n  \n{"id": 5}\n\n'));
+    await flushPromises();
+
+    expect(result.current?.items).toEqual([{ id: 5 }]);
+  });
+
   it('stops stream gracefully when success: false is received', async () => {
     const { result } = renderHook(() => useStream('cmd'));
     result.current?.start();

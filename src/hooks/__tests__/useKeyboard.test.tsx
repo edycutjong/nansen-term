@@ -96,6 +96,18 @@ describe('useKeyboard', () => {
       act(() => mockUseInputCallback('r', {}));
       expect(actions.onRefreshCurrent).not.toHaveBeenCalled();
     });
+
+    it('allows wallet switch/prev in overlay mode', () => {
+      const actions = createMockActions();
+      actions.hasOverlay = true;
+      renderHook(() => useKeyboard(actions));
+
+      act(() => mockUseInputCallback('w', {}));
+      expect(actions.onSwitchWallet).toHaveBeenCalled();
+
+      act(() => mockUseInputCallback('W', {}));
+      expect(actions.onPrevWallet).toHaveBeenCalled();
+    });
   });
 
   describe('pane navigation', () => {
