@@ -143,10 +143,7 @@ export default function App() {
   }, []);
 
   const { stdout } = useStdout();
-  // Fixed layout heights so panes never collapse while loading
-  // rows - header(2) - statusbar(2) - notification(1) - borders/padding(2)
   const totalRows = stdout?.rows ?? 40;
-  const paneHeight = Math.max(8, Math.floor((totalRows - 7) / 2));
 
   useKeyboard({
     onCycleChain: handleCycleChain,
@@ -196,7 +193,7 @@ export default function App() {
   }
 
   return (
-    <Box flexDirection="column" key={refreshKey}>
+    <Box flexDirection="column" height={totalRows} key={refreshKey}>
       {/* Header */}
       <Header chain={state.chain} walletName={state.walletName} />
 
@@ -213,34 +210,30 @@ export default function App() {
       )}
 
       {/* Top row: Netflow + DEX Trades */}
-      <Box>
+      <Box flexGrow={1}>
         <NetflowPane
           chain={state.chain}
           isActive={state.activePane === 'netflow'}
           selectedIndex={state.activePane === 'netflow' ? scrollIndex : -1}
-          height={paneHeight}
         />
         <DexTradesPane
           chain={state.chain}
           isActive={state.activePane === 'dex-trades'}
           selectedIndex={state.activePane === 'dex-trades' ? scrollIndex : -1}
           isStreaming={state.isStreaming}
-          height={paneHeight}
         />
       </Box>
 
       {/* Bottom row: Perp + Wallet */}
-      <Box>
+      <Box flexGrow={1}>
         <PerpPane
           isActive={state.activePane === 'perp'}
           selectedIndex={state.activePane === 'perp' ? scrollIndex : -1}
-          height={paneHeight}
         />
         <WalletPane
           chain={state.chain}
           walletName={state.walletName}
           isActive={state.activePane === 'wallet'}
-          height={paneHeight}
         />
       </Box>
 
