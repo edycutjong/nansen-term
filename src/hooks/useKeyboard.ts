@@ -8,6 +8,7 @@ interface KeyboardActions {
   onCycleChain: () => void;
   onPrevChain: () => void;
   onSwitchWallet: () => void;
+  onPrevWallet: () => void;
   onRefreshCurrent: () => void;
   onRefreshAll: () => void;
   onToggleHelp: () => void;
@@ -78,6 +79,7 @@ export function useKeyboard(actions: KeyboardActions) {
 
     // Hotkeys (c/C for chain direction)
     if (input === 'C') { actions.onPrevChain(); return; }  // Shift+C = prev
+    if (input === 'W') { actions.onPrevWallet(); return; }  // Shift+W = prev wallet
     switch (input.toLowerCase()) {
       case 'c': actions.onCycleChain(); break;
       case 'w': actions.onSwitchWallet(); break;

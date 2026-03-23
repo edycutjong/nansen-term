@@ -98,6 +98,31 @@ export default function App() {
     }
   }, [showNotification]);
 
+  const handlePrevWallet = useCallback(async () => {
+    try {
+      const result = await fetchWalletList();
+      const wallets = result.success
+        ? Array.isArray(result.data)
+          ? (result.data as Record<string, unknown>[])
+          : ((result.data as Record<string, unknown>)?.wallets as Record<string, unknown>[] ?? [])
+        : [];
+
+      if (wallets.length === 0) {
+        showNotification('⚠ No wallets found. Run: nansen wallet create', 'warn');
+        return;
+      }
+
+      const names = wallets.map((w) => String(w.name ?? w.wallet_name ?? '?'));
+      walletListRef.current = names;
+      walletIndexRef.current = (walletIndexRef.current - 1 + names.length) % names.length;
+      const next = names[walletIndexRef.current]!;
+      setState((s) => ({ ...s, walletName: next }));
+      showNotification(`✓ Wallet: ${next}`, 'info');
+    } catch {
+      showNotification('✗ Failed to fetch wallets', 'error');
+    }
+  }, [showNotification]);
+
   // Keep wallet list names in sync for Enter-to-select
   useEffect(() => {
     const doFetch = async () => {
@@ -245,6 +270,7 @@ export default function App() {
     onCycleChain: handleCycleChain,
     onPrevChain: handlePrevChain,
     onSwitchWallet: handleSwitchWallet,
+    onPrevWallet: handlePrevWallet,
     onRefreshCurrent: handleRefreshCurrent,
     onRefreshAll: handleRefreshAll,
     onToggleHelp: handleToggleHelp,
