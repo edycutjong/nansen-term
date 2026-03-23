@@ -24,7 +24,7 @@ export default function StatusBar({ apiCallCount, lastRefresh, isStreaming, erro
           <Text color="green">✓ Connected</Text>
         )}
         <Text color="gray"> · </Text>
-        <Text color="white">{apiCallCount} API calls</Text>
+        <Text color="white">{apiCallCount} API call{apiCallCount === 1 ? '' : 's'}</Text>
         <Text color="gray"> · </Text>
         <Text color="white">Last refresh: {timeStr}</Text>
       </Box>
