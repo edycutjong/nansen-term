@@ -19,12 +19,15 @@
 
 **Minimum requirement: just a Nansen API key.** No wallet needed to view analytics.
 
+> **Terminal size:** minimum **120 columns × 24 rows**.  
+> For demo, **160×40** (or full-screen iTerm2/Terminal) is recommended.
+
 ```bash
 # 1. Install nansen-cli and authenticate
 npm install -g nansen-cli
 nansen login --api-key YOUR_API_KEY   # get key: app.nansen.ai/auth/agent-setup
 
-# 2. Clone and run NansenTerm (need a 120×30+ terminal window)
+# 2. Clone and run NansenTerm
 git clone https://github.com/edycutjong/nansen-term.git
 cd nansen-term
 npm install
