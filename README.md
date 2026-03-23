@@ -51,9 +51,9 @@ npm --silent run demo  # no npm header lines at all
 | `C` | Cycle chain (ethereum → solana → base → ...) |
 | `W` | Switch wallet |
 | `Q` | Open trade quote modal |
-| `X` | Execute quoted trade (confirmation required) |
+| `T` | Execute quoted trade (confirmation required) |
 | `R` | Refresh current pane |
-| `A` | Refresh all panes |
+| `P` | Refresh all panes |
 | `S` | Toggle streaming mode |
 | `?` | Help overlay |
 | `Esc` | Close overlay / go back |
