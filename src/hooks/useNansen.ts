@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { execNansen } from '../lib/nansen.js';
-import { IS_MOCK, getMockData } from '../lib/mock.js';
-import type { NansenResponse } from '../types/nansen.js';
+
 
 interface UseNansenResult<T> {
   data: T | null;

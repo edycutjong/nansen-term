@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useInput } from 'ink';
 import type { PaneId } from '../types/nansen.js';
 

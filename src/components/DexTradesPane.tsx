@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Box, Text } from 'ink';
 import Pane from './Pane.js';
 import Table from './Table.js';

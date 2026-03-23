@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Box, Text, useStdout } from 'ink';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { Box, useStdout } from 'ink';
 import Header from './components/Header.js';
 import StatusBar from './components/StatusBar.js';
 import NetflowPane from './components/NetflowPane.js';
@@ -13,7 +13,7 @@ import WalletModal from './components/WalletModal.js';
 import { useKeyboard } from './hooks/useKeyboard.js';
 import { nextChain, prevChain } from './lib/chains.js';
 import { fetchWalletList, getApiCallCount } from './lib/nansen.js';
-import type { PaneId, Chain, AppState } from './types/nansen.js';
+import type { PaneId, AppState } from './types/nansen.js';
 
 type NotificationType = 'info' | 'warn' | 'error';
 interface Notification {

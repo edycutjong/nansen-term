@@ -1,7 +1,4 @@
-import React, { useState } from 'react';
 import { Box, Text } from 'ink';
-import { useNansen } from '../hooks/useNansen.js';
-import { formatUSD } from '../lib/formatter.js';
 import { CHAIN_META } from '../lib/chains.js';
 import type { Chain } from '../types/nansen.js';
 

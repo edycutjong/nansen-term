@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Text } from 'ink';
 import { useNansen } from '../hooks/useNansen.js';
 import { formatUSD, formatNumber, formatPercent } from '../lib/formatter.js';

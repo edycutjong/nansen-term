@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Text } from 'ink';
 import type { Chain } from '../types/nansen.js';
 import { CHAIN_META } from '../lib/chains.js';

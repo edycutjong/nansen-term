@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Text } from 'ink';
 import Pane from './Pane.js';
 import { useNansen } from '../hooks/useNansen.js';
@@ -22,7 +21,6 @@ export default function WalletPane({
   height,
   refreshTrigger = 0,
   selectedIndex = -1,
-  onSelectWallet,
 }: WalletPaneProps) {
   const { data: walletListData, loading: listLoading } = useNansen(
     'wallet list',
