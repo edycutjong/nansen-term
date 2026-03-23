@@ -138,7 +138,7 @@ export default function App() {
     const timer = setInterval(() => {
       setRefreshKey((k) => k + 1);
       setState((s) => ({ ...s, lastRefresh: new Date(), apiCallCount: getApiCallCount() }));
-    }, 60_000);
+    }, 5 * 60_000); // 5 min — conserve API credits
     return () => clearInterval(timer);
   }, []);
 
