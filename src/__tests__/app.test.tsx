@@ -1,13 +1,19 @@
-import React from 'react';
+
 import { render } from 'ink-testing-library';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import App from '../app';
-import { useNansen, getApiCallCount } from '../hooks/useNansen';
-import { useStream } from '../hooks/useStream';
+import App from '../app.js';
+import { useNansen } from '../hooks/useNansen.js';
+import { getApiCallCount } from '../lib/nansen.js';
+import { useStream } from '../hooks/useStream.js';
 
 vi.mock('../hooks/useNansen', () => ({
   useNansen: vi.fn(),
+}));
+
+vi.mock('../lib/nansen', () => ({
   getApiCallCount: vi.fn(),
+  fetchTradeQuote: vi.fn().mockResolvedValue({ success: true, data: {} }),
+  fetchTradeExecute: vi.fn().mockResolvedValue({ success: true, data: {} }),
 }));
 
 vi.mock('../hooks/useStream', () => ({

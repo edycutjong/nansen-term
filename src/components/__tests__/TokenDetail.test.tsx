@@ -1,4 +1,3 @@
-import React from 'react';
 import { render } from 'ink-testing-library';
 import { describe, expect, it, vi } from 'vitest';
 import TokenDetail from '../TokenDetail.js';
@@ -14,7 +13,7 @@ describe('TokenDetail', () => {
       data: null,
       error: null,
       loading: true,
-      trigger: vi.fn(),
+      refresh: vi.fn(),
     });
 
     const { lastFrame } = render(<TokenDetail chain="ethereum" tokenAddress="0x123" />);
@@ -24,7 +23,7 @@ describe('TokenDetail', () => {
   });
 
   it('renders properly with partial data', () => {
-    mockedUseNansen.mockImplementation((command) => {
+    mockedUseNansen.mockImplementation((command: string) => {
       if (command === 'research token info') {
         return {
           data: {
@@ -37,7 +36,7 @@ describe('TokenDetail', () => {
           },
           error: null,
           loading: false,
-          trigger: vi.fn(),
+          refresh: vi.fn(),
         };
       }
       if (command === 'research token indicators') {
@@ -48,10 +47,10 @@ describe('TokenDetail', () => {
           },
           error: null,
           loading: false,
-          trigger: vi.fn(),
+          refresh: vi.fn(),
         };
       }
-      return { data: null, error: null, loading: false, trigger: vi.fn() };
+      return { data: null, error: null, loading: false, refresh: vi.fn() };
     });
 
     const { lastFrame } = render(<TokenDetail chain="ethereum" tokenAddress="0x123" />);
@@ -66,7 +65,7 @@ describe('TokenDetail', () => {
   });
 
   it('handles negative price changes', () => {
-    mockedUseNansen.mockImplementation((command) => {
+    mockedUseNansen.mockImplementation((command: string) => {
       if (command === 'research token info') {
         return {
           data: {
@@ -79,7 +78,7 @@ describe('TokenDetail', () => {
           },
           error: null,
           loading: false,
-          trigger: vi.fn(),
+          refresh: vi.fn(),
         };
       }
       if (command === 'research token indicators') {
@@ -90,10 +89,10 @@ describe('TokenDetail', () => {
           },
           error: null,
           loading: false,
-          trigger: vi.fn(),
+          refresh: vi.fn(),
         };
       }
-      return { data: null, error: null, loading: false, trigger: vi.fn() };
+      return { data: null, error: null, loading: false, refresh: vi.fn() };
     });
 
     const { lastFrame } = render(<TokenDetail chain="ethereum" tokenAddress="0x123456789012345678901234567890" />);
@@ -110,7 +109,7 @@ describe('TokenDetail', () => {
       data: null, // this will be cast to {} and trigger fallbacks
       error: null,
       loading: false,
-      trigger: vi.fn(),
+      refresh: vi.fn(),
     });
 
     const { lastFrame } = render(<TokenDetail chain="ethereum" tokenAddress="0x123" />);
@@ -126,3 +125,4 @@ describe('TokenDetail', () => {
     expect(frame).toContain('SM Score:     0.00');
   });
 });
+

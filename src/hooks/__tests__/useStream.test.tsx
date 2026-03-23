@@ -6,7 +6,7 @@ import { Text } from 'ink';
 import * as nansenModule from '../../lib/nansen.js';
 import * as mockModule from '../../lib/mock.js';
 import { EventEmitter } from 'events';
-import type { ChildProcess } from 'node:child_process';
+// ChildProcess type is used implicitly via mocking
 
 vi.mock('../../lib/nansen.js', () => ({
   execNansen: vi.fn(),

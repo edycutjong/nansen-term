@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { render } from 'ink-testing-library';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import DexTradesPane from '../DexTradesPane.js';
