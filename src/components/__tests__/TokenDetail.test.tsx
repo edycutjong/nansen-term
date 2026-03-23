@@ -124,5 +124,32 @@ describe('TokenDetail', () => {
     expect(frame).toContain('Nansen Score: 0.00');
     expect(frame).toContain('SM Score:     0.00');
   });
+
+  it('shows red color for negative price_change_24h', () => {
+    mockedUseNansen.mockImplementation((command: string) => {
+      if (command === 'research token info') {
+        return {
+          data: {
+            name: 'Red Token',
+            symbol: 'RED',
+            price_usd: '0.50',
+            price_change_24h: '-12.3',
+            market_cap: '500000',
+            volume_24h: '10000',
+          },
+          error: null,
+          loading: false,
+          refresh: vi.fn(),
+        };
+      }
+      return { data: null, error: null, loading: false, refresh: vi.fn() };
+    });
+
+    const { lastFrame } = render(<TokenDetail chain="ethereum" tokenAddress="0xabc" />);
+    const frame = lastFrame();
+
+    expect(frame).toContain('Red Token');
+    expect(frame).toContain('-12.300%');
+  });
 });
 
