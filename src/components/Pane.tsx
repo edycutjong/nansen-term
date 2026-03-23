@@ -6,10 +6,11 @@ interface PaneProps {
   emoji?: string;
   isActive?: boolean;
   width?: string | number;
+  height?: string | number;
   children: React.ReactNode;
 }
 
-export default function Pane({ title, emoji, isActive = false, width, children }: PaneProps) {
+export default function Pane({ title, emoji, isActive = false, width, height, children }: PaneProps) {
   const borderColor = isActive ? 'cyan' : 'gray';
   const titleColor = isActive ? 'cyan' : 'white';
 
@@ -20,6 +21,7 @@ export default function Pane({ title, emoji, isActive = false, width, children }
       borderStyle="single"
       borderColor={borderColor}
       width={width}
+      height={height}
       paddingX={1}
     >
       <Box>

@@ -13,6 +13,7 @@ interface DexTradesPaneProps {
   selectedIndex: number;
   isStreaming?: boolean;
   height?: number;
+  refreshTrigger?: number;
 }
 
 const COLUMNS = [
@@ -31,12 +32,12 @@ function parseEntry(entry: Record<string, unknown>) {
   };
 }
 
-export default function DexTradesPane({ chain, isActive, selectedIndex, isStreaming = false, height }: DexTradesPaneProps) {
-  // Snapshot mode (default)
+export default function DexTradesPane({ chain, isActive, selectedIndex, isStreaming = false, height, refreshTrigger = 0 }: DexTradesPaneProps) {
   const { data, loading: snapLoading, error: snapError } = useNansen(
     'research smart-money dex-trades',
     ['--chain', chain, '--limit', '10'],
     !isStreaming,
+    refreshTrigger,
   );
 
   // Streaming mode

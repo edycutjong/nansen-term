@@ -18,6 +18,7 @@ export function useNansen<T = unknown>(
   command: string,
   args: string[] = [],
   autoFetch = true,
+  trigger = 0,
 ): UseNansenResult<T> {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(autoFetch);
@@ -58,7 +59,7 @@ export function useNansen<T = unknown>(
     if (autoFetch) {
       refresh();
     }
-  }, [refresh, autoFetch]);
+  }, [refresh, autoFetch, trigger]);
 
   return { data, loading, error, refresh };
 }

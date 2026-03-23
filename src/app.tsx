@@ -133,13 +133,19 @@ export default function App() {
     setScrollIndex((i) => i + 1);
   }, []);
 
-  // 60-second auto-refresh timer
+  // Auto-refresh timer — only increments trigger, no full remount
   useEffect(() => {
     const timer = setInterval(() => {
       setRefreshKey((k) => k + 1);
       setState((s) => ({ ...s, lastRefresh: new Date(), apiCallCount: getApiCallCount() }));
     }, 5 * 60_000); // 5 min — conserve API credits
     return () => clearInterval(timer);
+  }, []);
+
+  // Hide terminal cursor to prevent blinking cursor artifact
+  useEffect(() => {
+    process.stdout.write('\x1B[?25l'); // hide cursor
+    return () => { process.stdout.write('\x1B[?25h'); }; // restore on exit
   }, []);
 
   const { stdout } = useStdout();
@@ -193,7 +199,7 @@ export default function App() {
   }
 
   return (
-    <Box flexDirection="column" height={totalRows} key={refreshKey}>
+    <Box flexDirection="column" height={totalRows}>
       {/* Header */}
       <Header chain={state.chain} walletName={state.walletName} />
 
@@ -215,12 +221,14 @@ export default function App() {
           chain={state.chain}
           isActive={state.activePane === 'netflow'}
           selectedIndex={state.activePane === 'netflow' ? scrollIndex : -1}
+          refreshTrigger={refreshKey}
         />
         <DexTradesPane
           chain={state.chain}
           isActive={state.activePane === 'dex-trades'}
           selectedIndex={state.activePane === 'dex-trades' ? scrollIndex : -1}
           isStreaming={state.isStreaming}
+          refreshTrigger={refreshKey}
         />
       </Box>
 
@@ -229,11 +237,13 @@ export default function App() {
         <PerpPane
           isActive={state.activePane === 'perp'}
           selectedIndex={state.activePane === 'perp' ? scrollIndex : -1}
+          refreshTrigger={refreshKey}
         />
         <WalletPane
           chain={state.chain}
           walletName={state.walletName}
           isActive={state.activePane === 'wallet'}
+          refreshTrigger={refreshKey}
         />
       </Box>
 

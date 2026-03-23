@@ -9,6 +9,7 @@ interface PerpPaneProps {
   isActive: boolean;
   selectedIndex: number;
   height?: number;
+  refreshTrigger?: number;
 }
 
 const COLUMNS = [
@@ -17,10 +18,12 @@ const COLUMNS = [
   { header: 'OI Change', key: 'oiChange', width: 12, align: 'right' as const },
 ];
 
-export default function PerpPane({ isActive, selectedIndex, height }: PerpPaneProps) {
+export default function PerpPane({ isActive, selectedIndex, height, refreshTrigger = 0 }: PerpPaneProps) {
   const { data, loading, error } = useNansen(
     'research perp screener',
     ['--limit', '10'],
+    true,
+    refreshTrigger,
   );
 
   if (loading) {

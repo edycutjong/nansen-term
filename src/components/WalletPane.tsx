@@ -10,20 +10,22 @@ interface WalletPaneProps {
   walletName: string | null;
   isActive: boolean;
   height?: number;
+  refreshTrigger?: number;
 }
 
-export default function WalletPane({ chain, walletName, isActive, height }: WalletPaneProps) {
-  // Fetch wallet list first
+export default function WalletPane({ chain, walletName, isActive, height, refreshTrigger = 0 }: WalletPaneProps) {
   const { data: walletListData, loading: listLoading } = useNansen(
     'wallet list',
     [],
+    true,
+    refreshTrigger,
   );
 
-  // If we have a wallet, try to show its details
   const { data: walletData, loading: walletLoading, error: walletError } = useNansen(
     'wallet show',
     walletName ? ['--name', walletName] : [],
     !!walletName,
+    refreshTrigger,
   );
 
   if (listLoading || walletLoading) {
