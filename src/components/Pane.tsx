@@ -14,7 +14,7 @@ interface PaneProps {
 export default function Pane({ title, emoji, isActive = false, paneNumber, width, height, children }: PaneProps) {
   const borderColor = isActive ? 'cyan' : 'gray';
   const titleColor = isActive ? 'cyan' : 'white';
-  const prefix = isActive ? '▸' : paneNumber !== undefined ? String(paneNumber) : '';
+  const prefix = isActive ? '◂' : paneNumber !== undefined ? String(paneNumber) : '';
 
   return (
     <Box
@@ -27,10 +27,10 @@ export default function Pane({ title, emoji, isActive = false, paneNumber, width
       paddingX={1}
     >
       <Box>
-        <Text color={isActive ? 'cyan' : 'gray'} bold>{prefix} </Text>
         <Text color={titleColor} bold>
           {emoji ? `${emoji} ` : ''}{title.toUpperCase()}
         </Text>
+        <Text color={isActive ? 'cyan' : 'gray'} bold>{prefix} </Text>
       </Box>
       <Box flexDirection="column" flexGrow={1}>
         {children}

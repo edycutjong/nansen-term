@@ -19,37 +19,32 @@ export default function Table({ columns, data, maxRows, selectedIndex }: TablePr
   const totalWidth = columns.reduce((sum, col) => sum + col.width, 0);
 
   // Calculate the visible window
+  // "maxRows" now strictly means EXACTLY how many data rows + bottom indicator rows we can render.
   let scrollOffset = 0;
   let visibleCount = maxRows ?? data.length;
   let showAbove = false;
   let showBelow = false;
 
   if (maxRows !== undefined && data.length > maxRows) {
-    // Start with reserving 1 row for ▼
-    visibleCount = Math.max(1, maxRows - 1);
-
     if (selectedIndex !== undefined && selectedIndex >= 0) {
-      // Compute scroll position
+      // Basic idea: we want visibleCount to be maxRows - 1 (to leave room for ▼)
+      visibleCount = Math.max(1, maxRows - 1);
+
+      // Ensure the selected item is somewhere in [scrollOffset, scrollOffset + visibleCount - 1]
       scrollOffset = Math.max(0, Math.min(selectedIndex - visibleCount + 1, data.length - visibleCount));
-
-      // If scrolled down, also need ▲ — steal another row
-      if (scrollOffset > 0) {
-        visibleCount = Math.max(1, maxRows - 2); // 1 for ▲ + 1 for ▼
-        scrollOffset = Math.max(0, Math.min(selectedIndex - visibleCount + 1, data.length - visibleCount));
-      }
-    }
-
-    // If only 1 item above, just show it instead of ▲ indicator
-    if (scrollOffset === 1) {
+    } else {
+      visibleCount = Math.max(1, maxRows - 1);
       scrollOffset = 0;
-      visibleCount += 1; // reclaim the ▲ row
     }
 
+    // Now refine: if we are at the very bottom, or only 1 item remaining, reclaim the ▼ row for data.
     const remaining = data.length - scrollOffset - visibleCount;
 
-    // If only 1 item below, just show it instead of ▼ indicator
     if (remaining === 1) {
       visibleCount += 1; // reclaim the ▼ row
+    } else if (scrollOffset + visibleCount >= data.length) {
+      visibleCount = maxRows; // reclaim the ▼ row completely
+      scrollOffset = Math.max(0, data.length - visibleCount); // shift up to fit
     }
 
     showAbove = scrollOffset > 0;
@@ -73,21 +68,22 @@ export default function Table({ columns, data, maxRows, selectedIndex }: TablePr
         ))}
       </Box>
 
-      {/* Separator */}
-      <Box>
-        {columns.map((col, i) => (
-          <Box key={i} width={col.width}>
-            <Text color="gray" dimColor>{'─'.repeat(col.width - 1)}</Text>
-          </Box>
-        ))}
+      {/* Separator / Top Indicator */}
+      <Box width={totalWidth}>
+        {showAbove ? (() => {
+          const msg = ` ▲ ${scrollOffset} more `;
+          const dashCount = Math.max(0, totalWidth - msg.length);
+          const leftDashes = Math.floor(dashCount / 2);
+          const rightDashes = dashCount - leftDashes;
+          return <Text color="gray" dimColor>{'─'.repeat(leftDashes)}{msg}{'─'.repeat(rightDashes)}</Text>;
+        })() : (
+          columns.map((col, i) => (
+            <Box key={i} width={col.width}>
+              <Text color="gray" dimColor>{'─'.repeat(col.width - 1)}</Text>
+            </Box>
+          ))
+        )}
       </Box>
-
-      {/* Scroll up indicator — below separator, in the data area */}
-      {showAbove ? (
-        <Box justifyContent="center" width={totalWidth}>
-          <Text color="gray" dimColor>▲ {scrollOffset} more</Text>
-        </Box>
-      ) : null}
 
       {/* Data rows */}
       {rows.length === 0 ? (

@@ -77,13 +77,12 @@ export default function DexTradesPane({ chain, isActive, selectedIndex, isStream
 
   const clampedIndex = rows.length > 0 ? Math.min(selectedIndex, rows.length - 1) : -1;
 
-  // Extract buyer token from swap string for token detail
+  // Pass the full swap string for token detail (e.g. SOL→USDC)
   useEffect(() => {
     if (isActive && onHighlight) {
       if (clampedIndex >= 0 && clampedIndex < rows.length) {
         const swap = rows[clampedIndex]!.swap;
-        const buyerToken = swap.split('→')[0]!.trim();
-        onHighlight(buyerToken, 'dex-trades');
+        onHighlight(swap, 'dex-trades');
       } else {
         onHighlight(null, 'dex-trades');
       }

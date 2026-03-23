@@ -268,7 +268,10 @@ export default function App() {
   // Layout: header(2) + statusBar(1) = 3
   // Pane overhead: border(2) + title(1) + tableHeader(1) + separator(1) = 5
   // Note: ▼ indicator is handled inside Table's maxRows budget
-  const paneDataRows = Math.max(3, Math.floor((totalRows - 3) / 2) - 5);
+  const row1Height = Math.ceil((totalRows - 2) / 2);
+  const row2Height = Math.floor((totalRows - 2) / 2);
+  const topPaneDataRows = Math.max(1, row1Height - 5);
+  const bottomPaneDataRows = Math.max(1, row2Height - 5);
 
   const handleScrollDown = useCallback(() => {
     setScrollIndex((i) => Math.min(i + 1, dataLengthRef.current - 1));
@@ -370,7 +373,7 @@ export default function App() {
           selectedIndex={state.activePane === 'netflow' ? scrollIndex : -1}
           refreshTrigger={refreshKeys.netflow}
           onHighlight={handleHighlight}
-          maxRows={paneDataRows}
+          maxRows={topPaneDataRows}
           paneNumber={1}
           onDataLength={state.activePane === 'netflow' ? handleDataLength : undefined}
         />
@@ -381,7 +384,7 @@ export default function App() {
           isStreaming={state.isStreaming}
           refreshTrigger={refreshKeys['dex-trades']}
           onHighlight={handleHighlight}
-          maxRows={paneDataRows}
+          maxRows={topPaneDataRows}
           paneNumber={2}
           onDataLength={state.activePane === 'dex-trades' ? handleDataLength : undefined}
         />
@@ -394,7 +397,7 @@ export default function App() {
           selectedIndex={state.activePane === 'perp' ? scrollIndex : -1}
           refreshTrigger={refreshKeys.perp}
           onHighlight={handleHighlight}
-          maxRows={paneDataRows}
+          maxRows={bottomPaneDataRows}
           paneNumber={3}
           onDataLength={state.activePane === 'perp' ? handleDataLength : undefined}
         />

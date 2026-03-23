@@ -8,7 +8,7 @@ interface TokenDetailProps {
   tokenAddress: string;
 }
 
-export default function TokenDetail({ chain, tokenAddress }: TokenDetailProps) {
+function SingleTokenDetail({ chain, tokenAddress }: { chain: Chain; tokenAddress: string }) {
   const { data: infoData, loading: infoLoading } = useNansen(
     'research token info',
     ['--chain', chain, '--token', tokenAddress],
@@ -21,9 +21,8 @@ export default function TokenDetail({ chain, tokenAddress }: TokenDetailProps) {
 
   if (infoLoading || indicatorLoading) {
     return (
-      <Box flexDirection="column" borderStyle="double" borderColor="gray" paddingX={2} paddingY={1}>
-        <Text color="cyan" bold>🔍 TOKEN DETAIL</Text>
-        <Text color="yellow">Loading token data...</Text>
+      <Box flexDirection="column" paddingY={1}>
+        <Text color="yellow">Loading '{tokenAddress}' data...</Text>
       </Box>
     );
   }
@@ -32,10 +31,7 @@ export default function TokenDetail({ chain, tokenAddress }: TokenDetailProps) {
   const indicators = (indicatorData ?? {}) as Record<string, unknown>;
 
   return (
-    <Box flexDirection="column" borderStyle="double" borderColor="gray" paddingX={2} paddingY={1}>
-      <Text color="cyan" bold>🔍 TOKEN DETAIL</Text>
-      <Text> </Text>
-
+    <Box flexDirection="column">
       <Box flexDirection="column">
         <Box>
           <Text color="gray">Name:     </Text>
@@ -44,10 +40,6 @@ export default function TokenDetail({ chain, tokenAddress }: TokenDetailProps) {
         <Box>
           <Text color="gray">Symbol:   </Text>
           <Text color="white" bold>{String(info.symbol ?? info.token_symbol ?? '—')}</Text>
-        </Box>
-        <Box>
-          <Text color="gray">Chain:    </Text>
-          <Text color="white">{chain}</Text>
         </Box>
         <Box>
           <Text color="gray">Address:  </Text>
@@ -76,25 +68,42 @@ export default function TokenDetail({ chain, tokenAddress }: TokenDetailProps) {
           <Text color="gray">Market Cap:  </Text>
           <Text color="white">{formatUSD(Number(info.market_cap ?? info.marketCap ?? 0))}</Text>
         </Box>
-        <Box>
-          <Text color="gray">Volume 24h:  </Text>
-          <Text color="white">{formatUSD(Number(info.volume_24h ?? info.volume24h ?? 0))}</Text>
-        </Box>
       </Box>
 
       <Text> </Text>
-      <Text color="cyan" bold>─── NANSEN SCORE ───</Text>
+      <Text color="cyan" bold>─── SCORE ───</Text>
 
       <Box flexDirection="column">
         <Box>
-          <Text color="gray">Nansen Score: </Text>
+          <Text color="gray">Nansen: </Text>
           <Text color="yellow" bold>{formatNumber(Number(indicators.nansen_score ?? indicators.nansenScore ?? 0))}</Text>
-        </Box>
-        <Box>
-          <Text color="gray">SM Score:     </Text>
+          <Text color="gray"> | SM: </Text>
           <Text color="yellow">{formatNumber(Number(indicators.smart_money_score ?? indicators.smartMoneyScore ?? 0))}</Text>
         </Box>
       </Box>
+    </Box>
+  );
+}
+
+export default function TokenDetail({ chain, tokenAddress }: TokenDetailProps) {
+  const tokens = tokenAddress.includes('→') ? tokenAddress.split('→').map(t => t.trim()) : [tokenAddress];
+
+  return (
+    <Box flexDirection="column" borderStyle="double" borderColor="gray" paddingX={2} paddingY={1}>
+      <Text color="cyan" bold>🔍 TOKEN DETAIL</Text>
+      <Text color="gray">Chain: {chain}</Text>
+      <Text> </Text>
+
+      {tokens.map((token, index) => (
+        <Box flexDirection="column" key={token}>
+          {index > 0 && (
+            <Box marginY={1}>
+              <Text color="gray">──────────────────────</Text>
+            </Box>
+          )}
+          <SingleTokenDetail chain={chain} tokenAddress={token} />
+        </Box>
+      ))}
     </Box>
   );
 }

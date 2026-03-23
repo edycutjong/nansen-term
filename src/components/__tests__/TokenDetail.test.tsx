@@ -19,7 +19,7 @@ describe('TokenDetail', () => {
     const { lastFrame } = render(<TokenDetail chain="ethereum" tokenAddress="0x123" />);
     const frame = lastFrame();
 
-    expect(frame).toContain('Loading token data...');
+    expect(frame).toContain("Loading '0x123' data...");
   });
 
   it('renders properly with partial data', () => {
@@ -117,12 +117,11 @@ describe('TokenDetail', () => {
 
     expect(frame).toContain('Name:     —');
     expect(frame).toContain('Symbol:   —');
-    expect(frame).toContain('Price:       $0.0000');
+    expect(frame).toContain('Price:       $0.00');
     expect(frame).toContain('24h Change:  0.000%');
-    expect(frame).toContain('Market Cap:  $0.0000');
-    expect(frame).toContain('Volume 24h:  $0.0000');
-    expect(frame).toContain('Nansen Score: 0.00');
-    expect(frame).toContain('SM Score:     0.00');
+    expect(frame).toContain('Market Cap:  $0.00');
+    expect(frame).toContain('Nansen: 0.00');
+    expect(frame).toContain('| SM: 0.00');
   });
 
   it('shows red color for negative price_change_24h', () => {

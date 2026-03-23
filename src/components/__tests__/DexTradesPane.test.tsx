@@ -94,7 +94,7 @@ describe('DexTradesPane', () => {
 
     await new Promise(r => setTimeout(r, 0));
     // highlight index 1
-    expect(onHighlight).toHaveBeenCalledWith('WETH', 'dex-trades');
+    expect(onHighlight).toHaveBeenCalledWith('WETH→DAI', 'dex-trades');
   });
 
   it('starts and stops stream based on prop', async () => {
