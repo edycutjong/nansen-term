@@ -17,17 +17,25 @@
 
 ## Quick Start
 
-```bash
-# Prerequisites: nansen-cli must be installed and authenticated
-npm install -g nansen-cli
-nansen login --human
+**Minimum requirement: just a Nansen API key.** No wallet needed to view analytics.
 
-# Install and run NansenTerm
+```bash
+# 1. Install nansen-cli and authenticate
+npm install -g nansen-cli
+nansen login --api-key YOUR_API_KEY   # get key: app.nansen.ai/auth/agent-setup
+
+# 2. Clone and run NansenTerm (need a 120×30+ terminal window)
 git clone https://github.com/edycutjong/nansen-term.git
 cd nansen-term
 npm install
 npm run dev
 ```
+
+> **Wallet is optional.** The Netflow, DEX Trades, and Perp panes work without a wallet.
+> Only the `[Q]` trade quote and `[X]` execute features require one:
+> ```bash
+> nansen wallet create   # only needed for trading
+> ```
 
 ## Keyboard Shortcuts
 
