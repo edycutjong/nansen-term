@@ -98,7 +98,7 @@ export default function TokenDetail({ chain, tokenAddress }: TokenDetailProps) {
       </Box>
 
       <Text> </Text>
-      <Text color="gray" dimColor>[Q] Quote swap  [Esc] Close</Text>
+      <Text color="gray" dimColor>[Esc] Close</Text>
     </Box>
   );
 }
