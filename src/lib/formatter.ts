@@ -18,7 +18,7 @@ export function formatUSD(value: number | undefined | null): string {
     return `${sign}$${(abs / 1_000_000).toFixed(1)}M`;
   }
   if (abs >= 1_000) {
-    return `${sign}$${(abs / 1_000).toFixed(0)}K`;
+    return `${sign}$${(abs / 1_000).toFixed(1)}K`;
   }
   if (abs >= 1) {
     return `${sign}$${abs.toFixed(2)}`;
@@ -63,6 +63,7 @@ export function formatTime(timestamp: string | undefined | null): string {
   if (!timestamp) return '—';
   try {
     const d = new Date(timestamp);
+    if (isNaN(d.valueOf())) throw new Error();
     return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
   } catch {
     return timestamp.slice(11, 16) || '—';
