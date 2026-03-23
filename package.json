@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev": "tsx src/index.tsx",
+    "demo": "npm run dev --silent",
     "build": "tsc",
     "start": "node dist/index.js"
   },

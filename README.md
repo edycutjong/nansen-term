@@ -31,7 +31,8 @@ nansen login --api-key YOUR_API_KEY   # get key: app.nansen.ai/auth/agent-setup
 git clone https://github.com/edycutjong/nansen-term.git
 cd nansen-term
 npm install
-npm run dev
+npm run demo        # clean start, no npm header noise
+# or: npm run dev  # development (shows npm preamble)
 ```
 
 > **Wallet is optional.** The Netflow, DEX Trades, and Perp panes work without a wallet.
