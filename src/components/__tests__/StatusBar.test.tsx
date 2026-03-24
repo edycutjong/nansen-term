@@ -79,7 +79,7 @@ describe('StatusBar', () => {
 
     vi.useFakeTimers();
 
-    const { lastFrame } = render(
+    const { lastFrame, unmount } = render(
       <StatusBar {...baseProps} apiCallCount={5} />
     );
 
@@ -92,7 +92,52 @@ describe('StatusBar', () => {
     // Now should show 42 from the polled value
     expect(lastFrame()).toContain('42 API calls');
 
-    vi.useRealTimers();
+    unmount();
     getApiCallCountSpy.mockRestore();
+    vi.useRealTimers();
+  });
+
+  it('does not update count when polled value is 0', async () => {
+    const nansenModule = await import('../../lib/nansen.js');
+    const getApiCallCountSpy = vi.spyOn(nansenModule, 'getApiCallCount').mockReturnValue(0);
+
+    vi.useFakeTimers();
+
+    const { lastFrame, unmount } = render(
+      <StatusBar {...baseProps} apiCallCount={5} />
+    );
+
+    expect(lastFrame()).toContain('5 API calls');
+
+    await vi.advanceTimersByTimeAsync(1000);
+
+    // Count should stay 5 since polled value is 0
+    expect(lastFrame()).toContain('5 API calls');
+
+    unmount();
+    getApiCallCountSpy.mockRestore();
+    vi.useRealTimers();
+  });
+
+  it('cleans up polling interval on unmount', async () => {
+    const nansenModule = await import('../../lib/nansen.js');
+    const getApiCallCountSpy = vi.spyOn(nansenModule, 'getApiCallCount').mockReturnValue(10);
+
+    vi.useFakeTimers();
+
+    const { unmount, lastFrame } = render(
+      <StatusBar {...baseProps} apiCallCount={5} />
+    );
+
+    expect(lastFrame()).toContain('5 API calls');
+
+    // Unmount triggers clearInterval cleanup
+    unmount();
+
+    // Advancing timer after unmount should not cause errors
+    await vi.advanceTimersByTimeAsync(2000);
+
+    getApiCallCountSpy.mockRestore();
+    vi.useRealTimers();
   });
 });
