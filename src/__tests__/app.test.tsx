@@ -115,15 +115,15 @@ describe('App', () => {
 
   it('toggles help overlay on ? key press', async () => {
     const { lastFrame, stdin } = render(<App />);
-    await wait();
+    await wait(50);
     
     stdin.write('?');
-    await wait();
+    await wait(50);
     expect(lastFrame()).toContain('KEYBOARD SHORTCUTS');
     
     // Close help
     stdin.write('\x1B'); // Esc to close
-    await wait();
+    await wait(50);
     expect(lastFrame()).not.toContain('KEYBOARD SHORTCUTS');
   });
 
@@ -218,19 +218,19 @@ describe('App', () => {
 
   it('cycles chain from help overlay', async () => {
     const { lastFrame, stdin } = render(<App />);
-    await wait();
+    await wait(50);
 
     // Open help
     stdin.write('?');
-    await wait();
+    await wait(50);
     expect(lastFrame()).toContain('KEYBOARD SHORTCUTS');
 
     // Cycle chain while help is open
     stdin.write('c');
-    await wait();
+    await wait(50);
     // Help should still be visible but chain changed
     stdin.write('\x1B');
-    await wait();
+    await wait(50);
     expect(lastFrame()).toContain('Solana');
   });
 
@@ -579,16 +579,16 @@ describe('App', () => {
 
   it('can open trade from help overlay', async () => {
     const { lastFrame, stdin } = render(<App />);
-    await wait();
+    await wait(50);
 
     // Open help
     stdin.write('?');
-    await wait();
+    await wait(50);
     expect(lastFrame()).toContain('KEYBOARD SHORTCUTS');
 
     // Press q to open quote (should close help first)
     stdin.write('q');
-    await wait();
+    await wait(50);
     expect(lastFrame()).toContain('TRADE');
   });
 
