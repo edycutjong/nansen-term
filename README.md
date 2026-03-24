@@ -59,32 +59,15 @@ npm --silent run demo  # no npm header lines at all
 | `Esc` | Close overlay / go back |
 | `Ctrl+C` | Exit |
 
-## Dashboard Layout
+## Screenshots
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│  NansenTerm v1.0.0    Chain: [🔵 Ethereum ▸]    Wallet: [none]     │
-├────────────────────────────────┬────────────────────────────────────┤
-│  📊 SMART MONEY NETFLOW [1]   │  🔄 DEX TRADES ● LIVE [2]         │
-│                                │  • 8 trades  [S] stop streaming   │
-│  Token    24h Flow    7d Flow  │  Time   Swap           Value       │
-│  ─────    ────────    ───────  │  ─────  ─────────────  ─────       │
-│  ETH      -$3.1M     -$14.5M  │  11:14  LINK→USDC      +$55.0K    │
-│  WBTC     -$2.3M     +$13.9M  │  11:15  WBTC→ETH       +$44.5K    │
-│  USDC     -$4.6M     -$4.7M   │  11:14  SOL→USDC       +$3.0K     │
-│                                │                                    │
-├────────────────────────────────┼────────────────────────────────────┤
-│  📈 PERP SCREENER [3]         │  🏦 WALLET [4]                     │
-│                                │  Select a wallet (↑↓ + Enter):    │
-│  Symbol  Funding   OI Change  │  demo-wallet                       │
-│  BTC     -0.012%   +$23.2M   │  whale-tracker                     │
-│  ETH     -0.021%   +$16.6M   │  sol-degen                         │
-│  SOL     -0.043%   +$11.1M   │  main-vault                        │
-│                                │                                    │
-├────────────────────────────────┴────────────────────────────────────┤
-│  ✓ Connected · 10 API calls · Last refresh: 11:15:07    ● STREAMING │
-└─────────────────────────────────────────────────────────────────────┘
-```
+**Main Dashboard** — all 4 panes with live DEX streaming active:
+
+![NansenTerm Dashboard](docs/screenshots/dashboard.png)
+
+**Token Detail Overlay** — deep-dive any token with `Enter`:
+
+![Token Detail Overlay](docs/screenshots/token-detail.png)
 
 ## Tech Stack
 
