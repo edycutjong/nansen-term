@@ -941,4 +941,32 @@ describe('App', () => {
     const frame = lastFrame();
     expect(frame).toContain('mount-w1');
   });
+
+  it('Esc deselects wallet and returns to wallet list', async () => {
+    (fetchWalletList as any).mockResolvedValue({
+      success: true,
+      data: { wallets: [{ name: 'esc-w1' }, { name: 'esc-w2' }] },
+    });
+
+    const { lastFrame, stdin } = render(<App />);
+    await wait(50);
+
+    // Navigate to wallet pane (shift-tab to reach wallet)
+    stdin.write('\x1B[Z');
+    await wait();
+
+    // Press Enter to select wallet from walletListRef
+    stdin.write('\r');
+    await wait(50);
+
+    // Wallet name should appear in header
+    expect(lastFrame()).toContain('esc-w1');
+
+    // Press Esc to go back to wallet list
+    stdin.write('\x1B');
+    await wait(50);
+
+    // Wallet name should no longer be in header (walletName cleared)
+    expect(lastFrame()).not.toContain('Wallet: [esc-w1]');
+  });
 });

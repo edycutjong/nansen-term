@@ -72,6 +72,30 @@ describe('WalletPane', () => {
     expect(frame).toContain('array-wallet');
   });
 
+  it('shows scroll-up indicator when scrolled past first wallet', () => {
+    const manyWallets = Array.from({ length: 8 }, (_, i) => ({ name: `wallet-${i}` }));
+    vi.mocked(useNansen).mockImplementation((command) => {
+      if (command === 'wallet list') {
+        return {
+          data: { wallets: manyWallets },
+          loading: false,
+          error: null,
+          refresh: vi.fn(),
+        };
+      }
+      return { data: null, loading: false, error: null, refresh: vi.fn() };
+    });
+
+    // height=12: maxVisible = max(1, 12-5-4) = 3, selectedIndex=5 → scrollStart=3
+    const { lastFrame } = render(
+      <WalletPane chain="ethereum" walletName={null} isActive={true} selectedIndex={5} height={12} />
+    );
+    const frame = lastFrame();
+    expect(frame).toContain('▴ 3 more');
+    expect(frame).toContain('wallet-5');
+    expect(frame).toContain('▾ 2 more');
+  });
+
   it('renders specific wallet info with loading balances', () => {
     vi.mocked(useNansen).mockImplementation((command) => {
       if (command === 'wallet show') {

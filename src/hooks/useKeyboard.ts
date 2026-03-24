@@ -81,6 +81,7 @@ export function useKeyboard(actions: KeyboardActions) {
     // Number keys: jump to specific pane
     if (input >= '1' && input <= '4') {
       const paneIdx = parseInt(input, 10) - 1;
+      /* istanbul ignore next -- defensive guard: PANE_ORDER always has 4 entries */
       if (PANE_ORDER[paneIdx]) {
         actions.onSetActivePane(PANE_ORDER[paneIdx]!);
       }
