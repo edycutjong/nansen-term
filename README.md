@@ -11,7 +11,7 @@
 
 > *"Web apps are bloated. Real degens stay in the terminal."*
 
-[![Status](https://img.shields.io/badge/status-in%20development-orange)](https://github.com/edycutjong/nansen-term)
+[![Status](https://img.shields.io/badge/status-stable-brightgreen)](https://github.com/edycutjong/nansen-term)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Node 20](https://img.shields.io/badge/node-20-brightgreen)](https://nodejs.org/)
 [![Node 22](https://img.shields.io/badge/node-22-brightgreen)](https://nodejs.org/)
