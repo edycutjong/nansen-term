@@ -330,94 +330,124 @@ export default function App() {
     hasOverlay: hasOverlay,
   });
 
-  // Overlays take over the screen
-  if (state.showHelp) {
-    return (
-      <Box flexDirection="column" height={totalRows}>
-        <Header chain={state.chain} walletName={state.walletName} mode="help" />
-        <HelpOverlay />
-      </Box>
-    );
-  }
+  // Determine overlay mode for header
+  const overlayMode = state.showHelp ? 'help'
+    : showTokenDetail && selectedToken ? 'token'
+    : showTradeModal ? 'trade'
+    : showWalletModal ? 'wallet'
+    : undefined;
 
-  if (showTokenDetail && selectedToken) {
-    return (
-      <Box flexDirection="column" height={totalRows}>
-        <Header chain={state.chain} walletName={state.walletName} mode="token" />
-        <TokenDetail chain={state.chain} tokenAddress={selectedToken} />
-      </Box>
-    );
-  }
-
-  if (showTradeModal) {
-    return (
-      <Box flexDirection="column" height={totalRows}>
-        <Header chain={state.chain} walletName={state.walletName} mode="trade" />
-        <TradeModal chain={state.chain} walletName={state.walletName} mode={tradeMode} selectedToken={selectedToken} />
-      </Box>
-    );
-  }
-
-  if (showWalletModal) {
-    return (
-      <Box flexDirection="column" height={totalRows}>
-        <Header chain={state.chain} walletName={state.walletName} mode="wallet" />
-        <WalletModal />
-      </Box>
-    );
-  }
+  // Determine active overlay content
+  const overlayContent = state.showHelp ? (
+    <HelpOverlay />
+  ) : showTokenDetail && selectedToken ? (
+    <TokenDetail chain={state.chain} tokenAddress={selectedToken} />
+  ) : showTradeModal ? (
+    <TradeModal chain={state.chain} walletName={state.walletName} mode={tradeMode} selectedToken={selectedToken} />
+  ) : showWalletModal ? (
+    <WalletModal />
+  ) : null;
 
   return (
     <Box flexDirection="column" height={totalRows}>
       {/* Header */}
-      <Header chain={state.chain} walletName={state.walletName} />
+      <Header chain={state.chain} walletName={state.walletName} mode={overlayMode} />
 
-      {/* Top row: Netflow + DEX Trades */}
-      <Box flexBasis="50%" flexGrow={1}>
-        <NetflowPane
-          chain={state.chain}
-          isActive={state.activePane === 'netflow'}
-          selectedIndex={state.activePane === 'netflow' ? scrollIndex : -1}
-          refreshTrigger={refreshKeys.netflow}
-          onHighlight={handleHighlight}
-          maxRows={topPaneDataRows}
-          paneNumber={1}
-          onDataLength={state.activePane === 'netflow' ? handleDataLength : undefined}
-        />
-        <DexTradesPane
-          chain={state.chain}
-          isActive={state.activePane === 'dex-trades'}
-          selectedIndex={state.activePane === 'dex-trades' ? scrollIndex : -1}
-          isStreaming={state.isStreaming}
-          refreshTrigger={refreshKeys['dex-trades']}
-          onHighlight={handleHighlight}
-          maxRows={topPaneDataRows}
-          paneNumber={2}
-          onDataLength={state.activePane === 'dex-trades' ? handleDataLength : undefined}
-        />
-      </Box>
+      {overlayContent ? (
+        <>
+          {/* Overlay takes visual space */}
+          {overlayContent}
 
-      {/* Bottom row: Perp + Wallet */}
-      <Box flexBasis="50%" flexGrow={1}>
-        <PerpPane
-          isActive={state.activePane === 'perp'}
-          selectedIndex={state.activePane === 'perp' ? scrollIndex : -1}
-          refreshTrigger={refreshKeys.perp}
-          onHighlight={handleHighlight}
-          maxRows={bottomPaneDataRows}
-          paneNumber={3}
-          onDataLength={state.activePane === 'perp' ? handleDataLength : undefined}
-        />
-        <WalletPane
-          chain={state.chain}
-          walletName={state.walletName}
-          isActive={state.activePane === 'wallet'}
-          refreshTrigger={refreshKeys.wallet}
-          selectedIndex={state.activePane === 'wallet' ? scrollIndex : -1}
-          paneNumber={4}
-          height={row2Height}
-        />
-      </Box>
+          {/* Keep panes mounted but hidden (0 height) to preserve hook state */}
+          <Box height={0} overflow="hidden">
+            <NetflowPane
+              chain={state.chain}
+              isActive={false}
+              selectedIndex={-1}
+              refreshTrigger={refreshKeys.netflow}
+              onHighlight={handleHighlight}
+              maxRows={topPaneDataRows}
+              paneNumber={1}
+            />
+            <DexTradesPane
+              chain={state.chain}
+              isActive={false}
+              isStreaming={state.isStreaming}
+              selectedIndex={-1}
+              refreshTrigger={refreshKeys['dex-trades']}
+              onHighlight={handleHighlight}
+              maxRows={topPaneDataRows}
+              paneNumber={2}
+            />
+            <PerpPane
+              isActive={false}
+              selectedIndex={-1}
+              refreshTrigger={refreshKeys.perp}
+              onHighlight={handleHighlight}
+              maxRows={bottomPaneDataRows}
+              paneNumber={3}
+            />
+            <WalletPane
+              chain={state.chain}
+              walletName={state.walletName}
+              isActive={false}
+              refreshTrigger={refreshKeys.wallet}
+              selectedIndex={-1}
+              paneNumber={4}
+              height={row2Height}
+            />
+          </Box>
+        </>
+      ) : (
+        <>
+          {/* Top row: Netflow + DEX Trades */}
+          <Box flexBasis="50%" flexGrow={1}>
+            <NetflowPane
+              chain={state.chain}
+              isActive={state.activePane === 'netflow'}
+              selectedIndex={state.activePane === 'netflow' ? scrollIndex : -1}
+              refreshTrigger={refreshKeys.netflow}
+              onHighlight={handleHighlight}
+              maxRows={topPaneDataRows}
+              paneNumber={1}
+              onDataLength={state.activePane === 'netflow' ? handleDataLength : undefined}
+            />
+            <DexTradesPane
+              chain={state.chain}
+              isActive={state.activePane === 'dex-trades'}
+              isStreaming={state.isStreaming}
+              selectedIndex={state.activePane === 'dex-trades' ? scrollIndex : -1}
+              refreshTrigger={refreshKeys['dex-trades']}
+              onHighlight={handleHighlight}
+              maxRows={topPaneDataRows}
+              paneNumber={2}
+              onDataLength={state.activePane === 'dex-trades' ? handleDataLength : undefined}
+            />
+          </Box>
+
+          {/* Bottom row: Perp + Wallet */}
+          <Box flexBasis="50%" flexGrow={1}>
+            <PerpPane
+              isActive={state.activePane === 'perp'}
+              selectedIndex={state.activePane === 'perp' ? scrollIndex : -1}
+              refreshTrigger={refreshKeys.perp}
+              onHighlight={handleHighlight}
+              maxRows={bottomPaneDataRows}
+              paneNumber={3}
+              onDataLength={state.activePane === 'perp' ? handleDataLength : undefined}
+            />
+            <WalletPane
+              chain={state.chain}
+              walletName={state.walletName}
+              isActive={state.activePane === 'wallet'}
+              refreshTrigger={refreshKeys.wallet}
+              selectedIndex={state.activePane === 'wallet' ? scrollIndex : -1}
+              paneNumber={4}
+              height={row2Height}
+            />
+          </Box>
+        </>
+      )}
 
       {/* Status Bar */}
       <StatusBar
