@@ -1,14 +1,32 @@
 #!/bin/bash
 # ================================================
 # AUTOPILOT DEMO SCRIPT — NansenTerm
-# Run this while QuickTime / OBS is screen-recording
+# Uses AppleScript (osascript) — zero dependencies, native macOS
+# Run while QuickTime / OBS is screen-recording.
 #
 # Usage:  chmod +x demo.sh && ./demo.sh
-# Notes:  Please maximize your terminal (Recommended 160x45)
+# Notes:  Maximize your terminal first (160×45 recommended)
+#         Grant Accessibility: System Settings → Privacy & Security → Accessibility → Terminal ✓
 # ================================================
 
 cd "$(dirname "$0")" 2>/dev/null
 
+# ── Helpers ─────────────────────────────────────
+# Send a printable keystroke
+key() {
+  osascript -e "tell application \"System Events\" to keystroke \"$1\""
+}
+# Send a special key by macOS key code
+# 36=Enter  53=Escape  125=↓  126=↑  8=C (used with control for Ctrl+C)
+special() {
+  osascript -e "tell application \"System Events\" to key code $1"
+}
+# Send Ctrl+C
+ctrlc() {
+  osascript -e "tell application \"System Events\" to key code 8 using {control down}"
+}
+
+# ── Intro Screen ─────────────────────────────────
 clear
 echo ""
 echo -e "  \033[36m╔══════════════════════════════════════════════════╗\033[0m"
@@ -16,113 +34,77 @@ echo -e "  \033[36m║\033[0m        🚀 \033[1mNansenTerm — Autopilot Demo\0
 echo -e "  \033[36m║\033[0m     Terminal Dashboard for Nansen Analytics       \033[36m║\033[0m"
 echo -e "  \033[36m╚══════════════════════════════════════════════════╝\033[0m"
 echo ""
-echo -e "  \033[90mThis script acts as an automated director.\033[0m"
-echo -e "  \033[90mIt will launch the TUI and press all the keys perfectly.\033[0m"
+echo -e "  \033[90m• Keys are sent automatically via AppleScript — no dependencies\033[0m"
+echo -e "  \033[90m• 6 scenes, ~60s total\033[0m"
 echo ""
-echo -e "  \033[1mEnsure your terminal is massive (fullscreen) for 16:9 1080p.\033[0m"
+echo -e "  \033[1mBefore you start:\033[0m"
+echo -e "    1. Maximize this terminal window (fullscreen 160×45)"
+echo -e "    2. Allow Accessibility: System Settings → Privacy & Security → Accessibility → ✓ Terminal (or iTerm2)"
+echo -e "    3. Start your screen recorder (QuickTime or OBS)"
 echo ""
 echo -n "  ▶ Press any key to begin a 3-second countdown... "
 read -rsn1
-echo ""
-echo ""
+echo -e "\n"
 
 for i in 3 2 1; do
   echo -e "  \033[33mStarting in $i...\033[0m"
   sleep 1
 done
+clear
 
-# The heart of the autopilot — using expect to simulate an actual user typing
-expect << 'EOF'
-set timeout -1
-spawn npm --silent run mock
+# ── Autopilot Background Driver ──────────────────
+# Forks a subshell that injects keystrokes while the TUI runs in the foreground
+(
+  sleep 4.0   # Wait for TUI to fully boot and paint
 
-# Give it time to boot and fetch initial mock data
-sleep 3.5
+  # ── Scene 1: The Pulse — enable streaming, chain cycle
+  key "s";        sleep 2.5   # Start streaming
+  key "c";        sleep 3.0   # Cycle: ETH → SOL
+  key "c";        sleep 3.0   # Cycle: SOL → BASE
 
-# ── Scene 1: The Pulse (Streaming & Chains)
-# Enable streaming
-send "s"
-sleep 2.5
+  # ── Scene 2: Deep Dive Overlays
+  special 125;    sleep 0.4   # Arrow Down (select row)
+  special 36;     sleep 4.0   # Enter → Token Detail overlay
+  special 53;     sleep 1.2   # Escape → close
+  key "2";        sleep 1.5   # Jump to DEX Trades pane
+  special 36;     sleep 4.0   # Enter → DEX Token Detail overlay
+  special 53;     sleep 1.2   # Escape → close
 
-# Cycle chains (Base, Bnb)
-send "c"
-sleep 3.0
-send "c"
-sleep 3.0
+  # ── Scene 3: Portfolio Power
+  key "4";        sleep 1.5   # Jump to Wallet pane
+  special 125;    sleep 0.4   # Arrow Down
+  special 125;    sleep 0.4   # Arrow Down
+  special 36;     sleep 4.0   # Enter → Wallet Balances overlay
+  special 53;     sleep 1.2   # Escape → close
+  key "W";        sleep 3.0   # Cycle wallet backwards (Shift+W)
+  key "w";        sleep 2.0   # Cycle wallet forwards
 
-# ── Scene 2: Deep Dive Overlays
-# Scroll down and open token detail
-send "\033\[B"
-sleep 0.5
-send "\r"
-sleep 4.0
-send "\033"
-sleep 1.0
+  # ── Scene 4: Execution Context
+  key "q";        sleep 4.0   # Swap Quote modal
+  special 53;     sleep 1.2   # Escape
+  key "t";        sleep 4.0   # Trade Execution modal
+  special 53;     sleep 1.2   # Escape
 
-# Jump to DEX Trades pane (2), pick first, enter detail
-send "2"
-sleep 1.5
-send "\r"
-sleep 4.0
-send "\033"
-sleep 1.0
+  # ── Scene 5: Command Center
+  key "a";        sleep 3.0   # Add Tracked Wallet modal
+  special 53;     sleep 1.2   # Escape
+  osascript -e 'tell application "System Events" to keystroke "?" using {}'; sleep 4.0  # Help overlay
+  special 53;     sleep 1.2   # Escape
 
-# ── Scene 3: Portfolio Power
-# Jump to Wallet pane (4), scroll down, select
-send "4"
-sleep 1.5
-send "\033\[B"
-sleep 0.5
-send "\033\[B"
-sleep 0.5
-send "\r"
-sleep 4.0
-send "\033"
-sleep 1.0
+  # ── Scene 6: The Outro
+  key "p";        sleep 3.0   # Refresh all panes
 
-# Cycle header wallet backwards (Shift+W) and forwards (w)
-send "W"
-sleep 3.0
-send "w"
-sleep 2.0
+  # Exit cleanly
+  ctrlc
+) &
+AUTOPILOT_PID=$!
 
-# ── Scene 4: Execution Context
-# Quote Modal
-send "q"
-sleep 4.0
-send "\033"
-sleep 1.0
+# ── Launch TUI in Foreground ─────────────────────
+npm --silent run mock
 
-# Trade Modal
-send "t"
-sleep 4.0
-send "\033"
-sleep 1.0
-
-# ── Scene 5: Command Center
-# Add Tracked Wallet
-send "a"
-sleep 3.0
-send "\033"
-sleep 1.0
-
-# Help Modal
-send "?"
-sleep 4.0
-send "\033"
-sleep 1.0
-
-# ── Scene 6: The Outro
-# Manual Refresh all
-send "p"
-sleep 3.0
-
-# Exit cleanly
-send "\003"
-expect eof
-EOF
+# Cleanup autopilot subshell if TUI exits on its own
+kill $AUTOPILOT_PID 2>/dev/null
 
 echo ""
 echo -e "  \033[32m🎬 Autopilot demo complete! Stop your screen recording.\033[0m"
 echo ""
-
