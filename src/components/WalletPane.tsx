@@ -128,6 +128,9 @@ export default function WalletPane({
     ? balanceData as Record<string, unknown>[]
     : [];
 
+  // Cap balance rows: pane chrome(5) + name(1) + margin(1) + footer(2) = 9 overhead
+  const maxBalanceRows = Math.max(1, (height ?? 10) - 9);
+
   return (
     <Pane title="Wallet" emoji="🏦" isActive={isActive} paneNumber={paneNumber} width="50%" height={height}>
       <Box flexDirection="column">
@@ -140,7 +143,7 @@ export default function WalletPane({
           <Text color="yellow">Loading balances...</Text>
         ) : balances.length > 0 ? (
           <Box flexDirection="column" marginTop={1}>
-            {balances.slice(0, 6).map((b, i) => {
+            {balances.slice(0, maxBalanceRows).map((b, i) => {
               const symbol = String(b.token_symbol ?? b.symbol ?? '???');
               const amount = Number(b.balance ?? b.amount ?? 0);
               const valueUsd = Number(b.value_usd ?? b.usd_value ?? 0);

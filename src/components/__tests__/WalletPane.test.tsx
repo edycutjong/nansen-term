@@ -120,7 +120,7 @@ describe('WalletPane', () => {
       return { data: null, loading: false, error: null, refresh: vi.fn() };
     });
 
-    const { lastFrame } = render(<WalletPane chain="ethereum" walletName="main" isActive={true} />);
+    const { lastFrame } = render(<WalletPane chain="ethereum" walletName="main" isActive={true} height={20} />);
     const frame = lastFrame();
     expect(frame).toContain('ETH ');
     expect(frame).toContain('1.50');

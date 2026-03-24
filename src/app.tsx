@@ -237,14 +237,20 @@ export default function App() {
   }, [state.activePane, state.walletName, scrollIndex, showNotification]);
 
   const handleCloseOverlay = useCallback(() => {
-    // Only close overlays — do nothing when no overlay is open
+    // Close overlays first
     if (showTokenDetail || showTradeModal || showWalletModal || state.showHelp) {
       setState((s) => ({ ...s, showHelp: false }));
       setShowTokenDetail(false);
       setShowTradeModal(false);
       setShowWalletModal(false);
+      return;
     }
-  }, [showTokenDetail, showTradeModal, showWalletModal, state.showHelp]);
+    // If wallet is selected, Esc goes back to wallet list
+    if (state.activePane === 'wallet' && state.walletName) {
+      setState((s) => ({ ...s, walletName: null }));
+      setScrollIndex(0);
+    }
+  }, [showTokenDetail, showTradeModal, showWalletModal, state.showHelp, state.activePane, state.walletName]);
 
   const handleSetActivePane = useCallback((pane: PaneId) => {
     setState((s) => ({ ...s, activePane: pane }));

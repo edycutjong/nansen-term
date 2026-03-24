@@ -108,6 +108,12 @@ const generateWalletList = () => [
   { name: 'whale-tracker', type: 'local', evm_address: '0x1234...ABCD', solana_address: '—',           created_at: '2026-03-05T14:30:00.000Z' },
   { name: 'sol-degen',     type: 'local', evm_address: '—',             solana_address: '7y3g...9vBz', created_at: '2026-03-10T08:15:00.000Z' },
   { name: 'main-vault',    type: 'local', evm_address: '0x0000...0000', solana_address: '1111...1111', created_at: '2026-02-20T12:00:00.000Z' },
+  { name: 'arb-sniper',    type: 'local', evm_address: '0xA1B2...C3D4', solana_address: '—',           created_at: '2026-03-12T09:00:00.000Z' },
+  { name: 'nft-vault',     type: 'local', evm_address: '0xNFT1...NFT2', solana_address: '—',           created_at: '2026-03-14T16:45:00.000Z' },
+  { name: 'defi-yield',    type: 'local', evm_address: '0xDEF1...Y1LD', solana_address: 'DeFi...Sol1', created_at: '2026-03-15T11:20:00.000Z' },
+  { name: 'cold-storage',  type: 'local', evm_address: '0xC0LD...SAFE', solana_address: '—',           created_at: '2026-01-15T00:00:00.000Z' },
+  { name: 'meme-trader',   type: 'local', evm_address: '—',             solana_address: 'MEME...TRD1', created_at: '2026-03-18T22:30:00.000Z' },
+  { name: 'research-bot',  type: 'local', evm_address: '0xB0T1...B0T2', solana_address: 'Bot1...Bot2', created_at: '2026-03-20T07:00:00.000Z' },
 ];
 
 const generateTokenInfo = (args: string[]) => {
