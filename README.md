@@ -20,6 +20,12 @@
 
 ---
 
+## 🎬 Demo
+
+![NansenTerm Demo](docs/demo.gif)
+
+---
+
 ## ✨ Features
 
 | | Feature | Description |
