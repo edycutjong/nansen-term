@@ -409,6 +409,7 @@ export default function App() {
           refreshTrigger={refreshKeys.wallet}
           selectedIndex={state.activePane === 'wallet' ? scrollIndex : -1}
           paneNumber={4}
+          height={row2Height}
         />
       </Box>
 

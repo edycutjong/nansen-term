@@ -71,6 +71,17 @@ export default function WalletPane({
     // Show selectable wallet list
     const clampedIdx = walletCount > 0 ? Math.min(selectedIndex, walletCount - 1) : -1;
 
+    // Scroll windowing: 3 chrome lines inside pane (instruction + blank + footer)
+    // plus 1 blank line after list = 4 lines of chrome; rest is for wallet items
+    const maxVisible = Math.max(1, (height ?? 10) - 5 - 4);
+    let scrollStart = 0;
+    if (clampedIdx >= maxVisible) {
+      scrollStart = clampedIdx - maxVisible + 1;
+    }
+    const visibleWallets = wallets.slice(scrollStart, scrollStart + maxVisible);
+    const aboveCount = scrollStart;
+    const belowCount = walletCount - scrollStart - visibleWallets.length;
+
     return (
     <Pane title="Wallet" emoji="🏦" isActive={isActive} paneNumber={paneNumber} width="50%" height={height}>
         {walletCount === 0 ? (
@@ -83,12 +94,16 @@ export default function WalletPane({
           <Box flexDirection="column">
             <Text color="gray">Select a wallet (↑↓ + Enter):</Text>
             <Text> </Text>
-            {wallets.map((w, i) => {
-              const name = String((w as Record<string, unknown>).name ?? `wallet-${i}`);
-              const isHighlighted = isActive && i === clampedIdx;
+            {aboveCount > 0 && (
+              <Text color="gray" dimColor>  ▴ {aboveCount} more</Text>
+            )}
+            {visibleWallets.map((w, i) => {
+              const realIdx = scrollStart + i;
+              const name = String((w as Record<string, unknown>).name ?? `wallet-${realIdx}`);
+              const isHighlighted = isActive && realIdx === clampedIdx;
               return (
                 <Text
-                  key={i}
+                  key={realIdx}
                   color={isHighlighted ? 'black' : 'white'}
                   backgroundColor={isHighlighted ? 'cyan' : undefined}
                   bold={isHighlighted}
@@ -97,6 +112,9 @@ export default function WalletPane({
                 </Text>
               );
             })}
+            {belowCount > 0 && (
+              <Text color="gray" dimColor>  ▾ {belowCount} more</Text>
+            )}
             <Text> </Text>
             <Text color="gray" dimColor>[A] Add Wallet</Text>
           </Box>

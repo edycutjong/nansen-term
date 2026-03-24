@@ -47,7 +47,7 @@ describe('WalletPane', () => {
       return { data: null, loading: false, error: null, refresh: vi.fn() };
     });
 
-    const { lastFrame } = render(<WalletPane chain="ethereum" walletName={null} isActive={true} selectedIndex={1} />);
+    const { lastFrame } = render(<WalletPane chain="ethereum" walletName={null} isActive={true} selectedIndex={1} height={20} />);
     const frame = lastFrame();
     expect(frame).toContain('main');
     expect(frame).toContain(' ▸ secondary'); // Highlighted
