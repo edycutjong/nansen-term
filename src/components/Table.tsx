@@ -71,7 +71,7 @@ export default function Table({ columns, data, maxRows, selectedIndex }: TablePr
       {/* Separator / Top Indicator */}
       <Box width={totalWidth}>
         {showAbove ? (() => {
-          const msg = ` ▲ ${scrollOffset} more `;
+          const msg = ` ▴ ${scrollOffset} more `;
           const dashCount = Math.max(0, totalWidth - msg.length);
           const leftDashes = Math.floor(dashCount / 2);
           const rightDashes = dashCount - leftDashes;
@@ -120,7 +120,7 @@ export default function Table({ columns, data, maxRows, selectedIndex }: TablePr
       {/* Scroll down indicator */}
       {showBelow ? (
         <Box justifyContent="center" width={totalWidth}>
-          <Text color="gray" dimColor>▼ {data.length - scrollOffset - visibleCount} more</Text>
+          <Text color="gray" dimColor>▾ {data.length - scrollOffset - visibleCount} more</Text>
         </Box>
       ) : null}
     </Box>

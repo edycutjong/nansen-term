@@ -94,16 +94,26 @@ export default function TokenDetail({ chain, tokenAddress }: TokenDetailProps) {
       <Text color="gray">Chain: {chain}</Text>
       <Text> </Text>
 
-      {tokens.map((token, index) => (
-        <Box flexDirection="column" key={token}>
-          {index > 0 && (
-            <Box marginY={1}>
-              <Text color="gray">──────────────────────</Text>
-            </Box>
-          )}
-          <SingleTokenDetail chain={chain} tokenAddress={token} />
-        </Box>
-      ))}
+      <Box flexDirection="row" width="100%">
+        {tokens.map((token, index) => (
+          <Box
+            key={token}
+            flexDirection="column"
+            flexGrow={1}
+            flexBasis={tokens.length > 1 ? '50%' : '100%'}
+            paddingLeft={index > 0 ? 2 : 0}
+            paddingRight={index === 0 && tokens.length > 1 ? 2 : 0}
+            borderStyle={index > 0 ? 'single' : undefined}
+            borderRight={false}
+            borderTop={false}
+            borderBottom={false}
+            borderLeft={index > 0}
+            borderColor="gray"
+          >
+            <SingleTokenDetail chain={chain} tokenAddress={token} />
+          </Box>
+        ))}
+      </Box>
     </Box>
   );
 }
