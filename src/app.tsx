@@ -56,17 +56,17 @@ export default function App() {
     netflow: 0,
     'dex-trades': 0,
     perp: 0,
-    wallet: 0, 
+    wallet: 0,
   });
   const [notification, setNotification] = useState<Notification | null>(null);
   const [selectedToken, setSelectedToken] = useState<string | null>(null);
-  
+
   // Overlay states
   const [showTokenDetail, setShowTokenDetail] = useState(false);
   const [showTradeModal, setShowTradeModal] = useState(false);
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [tradeMode, setTradeMode] = useState<'quote' | 'execute'>('quote');
-  
+
   // Data streaming state
   const notifTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const walletListRef = useRef<string[]>([]);
@@ -265,11 +265,12 @@ export default function App() {
   const totalRows = stdout?.rows ?? 40;
 
   // Dynamic max visible rows per pane based on terminal height
-  // Layout: header(2) + statusBar(1) = 3
+  // Layout: header(2) + statusBar(1) = 3 lines of chrome
   // Pane overhead: border(2) + title(1) + tableHeader(1) + separator(1) = 5
   // Note: ▼ indicator is handled inside Table's maxRows budget
-  const row1Height = Math.ceil((totalRows - 2) / 2);
-  const row2Height = Math.floor((totalRows - 2) / 2);
+  const paneRows = totalRows - 3; // subtract header + status bar
+  const row1Height = Math.floor(paneRows / 2);
+  const row2Height = paneRows - row1Height;
   const topPaneDataRows = Math.max(1, row1Height - 5);
   const bottomPaneDataRows = Math.max(1, row2Height - 5);
 
