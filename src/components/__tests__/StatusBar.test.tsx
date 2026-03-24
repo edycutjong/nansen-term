@@ -1,5 +1,5 @@
 import { render } from 'ink-testing-library';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import StatusBar from '../StatusBar.js';
 
 describe('StatusBar', () => {
@@ -61,5 +61,38 @@ describe('StatusBar', () => {
       );
       expect(lastFrame()).toContain('Connection lost');
     });
+  });
+
+  it('renders singular "API call" when count is 1', () => {
+    const { lastFrame } = render(
+      <StatusBar {...baseProps} apiCallCount={1} />
+    );
+    const frame = lastFrame();
+    expect(frame).toContain('1 API call');
+    expect(frame).not.toContain('1 API calls');
+  });
+
+  it('updates count from polling interval', async () => {
+    // Mock getApiCallCount to return a higher value
+    const nansenModule = await import('../../lib/nansen.js');
+    const getApiCallCountSpy = vi.spyOn(nansenModule, 'getApiCallCount').mockReturnValue(42);
+
+    vi.useFakeTimers();
+
+    const { lastFrame } = render(
+      <StatusBar {...baseProps} apiCallCount={5} />
+    );
+
+    // Initially shows 5
+    expect(lastFrame()).toContain('5 API calls');
+
+    // Advance timer by 1 second to trigger the interval
+    await vi.advanceTimersByTimeAsync(1000);
+
+    // Now should show 42 from the polled value
+    expect(lastFrame()).toContain('42 API calls');
+
+    vi.useRealTimers();
+    getApiCallCountSpy.mockRestore();
   });
 });

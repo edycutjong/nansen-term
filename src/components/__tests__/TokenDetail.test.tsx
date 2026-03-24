@@ -150,5 +150,65 @@ describe('TokenDetail', () => {
     expect(frame).toContain('Red Token');
     expect(frame).toContain('-12.300%');
   });
+
+  it('renders two tokens side-by-side for swap addresses', () => {
+    mockedUseNansen.mockImplementation((command: string, args?: string[]) => {
+      const token = args?.find((_, i) => args[i - 1] === '--token');
+      if (command === 'research token info') {
+        if (token === 'SOL') {
+          return {
+            data: { name: 'Solana', symbol: 'SOL', price_usd: '100', price_change_24h: '2.5', market_cap: '50000000' },
+            error: null, loading: false, refresh: vi.fn(),
+          };
+        }
+        if (token === 'USDC') {
+          return {
+            data: { name: 'USD Coin', symbol: 'USDC', price_usd: '1', price_change_24h: '0.01', market_cap: '30000000' },
+            error: null, loading: false, refresh: vi.fn(),
+          };
+        }
+      }
+      if (command === 'research token indicators') {
+        return {
+          data: { nansen_score: '75', smart_money_score: '80' },
+          error: null, loading: false, refresh: vi.fn(),
+        };
+      }
+      return { data: null, error: null, loading: false, refresh: vi.fn() };
+    });
+
+    const { lastFrame } = render(<TokenDetail chain="solana" tokenAddress="SOL→USDC" />);
+    const frame = lastFrame();
+
+    expect(frame).toContain('TOKEN DETAIL');
+    expect(frame).toContain('Chain: solana');
+    expect(frame).toContain('Solana');
+    expect(frame).toContain('USD Coin');
+  });
+
+  it('renders single token for non-swap address', () => {
+    mockedUseNansen.mockImplementation((command: string) => {
+      if (command === 'research token info') {
+        return {
+          data: { name: 'Ethereum', symbol: 'ETH', price_usd: '3000', price_change_24h: '1.5', market_cap: '300000000' },
+          error: null, loading: false, refresh: vi.fn(),
+        };
+      }
+      if (command === 'research token indicators') {
+        return {
+          data: { nansen_score: '90', smart_money_score: '95' },
+          error: null, loading: false, refresh: vi.fn(),
+        };
+      }
+      return { data: null, error: null, loading: false, refresh: vi.fn() };
+    });
+
+    const { lastFrame } = render(<TokenDetail chain="ethereum" tokenAddress="ETH" />);
+    const frame = lastFrame();
+
+    expect(frame).toContain('Ethereum');
+    expect(frame).toContain('ETH');
+    expect(frame).toContain('TOKEN DETAIL');
+  });
 });
 

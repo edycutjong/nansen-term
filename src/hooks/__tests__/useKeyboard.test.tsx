@@ -188,4 +188,42 @@ describe('useKeyboard', () => {
       expect(actions.onSelectToken).toHaveBeenCalled();
     });
   });
+
+  describe('number key pane jumping', () => {
+    it('jumps to specific pane on number keys 1-4', () => {
+      const actions = createMockActions();
+      renderHook(() => useKeyboard(actions));
+
+      act(() => mockUseInputCallback('1', {}));
+      expect(actions.onSetActivePane).toHaveBeenCalledWith('netflow');
+
+      actions.onSetActivePane.mockClear();
+      act(() => mockUseInputCallback('2', {}));
+      expect(actions.onSetActivePane).toHaveBeenCalledWith('dex-trades');
+
+      actions.onSetActivePane.mockClear();
+      act(() => mockUseInputCallback('3', {}));
+      expect(actions.onSetActivePane).toHaveBeenCalledWith('perp');
+
+      actions.onSetActivePane.mockClear();
+      act(() => mockUseInputCallback('4', {}));
+      expect(actions.onSetActivePane).toHaveBeenCalledWith('wallet');
+    });
+
+    it('ignores invalid number keys like 5', () => {
+      const actions = createMockActions();
+      renderHook(() => useKeyboard(actions));
+
+      act(() => mockUseInputCallback('5', {}));
+      expect(actions.onSetActivePane).not.toHaveBeenCalled();
+    });
+
+    it('ignores number key 0', () => {
+      const actions = createMockActions();
+      renderHook(() => useKeyboard(actions));
+
+      act(() => mockUseInputCallback('0', {}));
+      expect(actions.onSetActivePane).not.toHaveBeenCalled();
+    });
+  });
 });
